@@ -103,10 +103,16 @@
         //   }
         // });
         if (this.updateApiForm.formData.url) {
-          alert('API信息提交成功!现在可以进行测试或直接发布api！');
+          this.$message({
+            message: 'API信息提交成功!现在可以进行测试或直接发布api！',
+            type: 'success'
+          });
           this.isSubmit = true;
         } else {
-          alert('api的URL是必须要填的！');
+          this.$message({
+            message: 'api的URL是必须要填的！',
+            type: 'warning'
+          });
         }
         var params = this.updateApiForm.formData.params;
         var params_object = {};  // { key1: true|false, key2: true|false } true表示必填，否者是选填
@@ -140,7 +146,10 @@
       },
       updateApi: function() {  // 通知Vuex把api信息发到后台存到数据库中
         this.$store.dispatch('updateApi', this.formData);
-        alert('更新api成功');
+        this.$message({
+          message: '更新api成功',
+          type: 'success'
+        });
       },
       deleteApi: function() {
         this.$confirm('此操作将永久删除该API, 是否继续?', '提示', {

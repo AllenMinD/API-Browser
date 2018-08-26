@@ -11,7 +11,7 @@
       </transition>
 
       <div class="el-content">
-        <el-row :gutter="20">
+        <el-row :gutter="0">
           <el-col :span="6"><div class="grid-content"></div></el-col>
           <el-col :span="12"><div class="grid-content">
             <transition name="slide" mode="out-in" type="animation" appear>
@@ -90,7 +90,7 @@
     border-radius: 7px;
     box-shadow: 0 0 20px #999;
     padding: 30px 40px;
-    width: 45%;
+    width: 55%;
     margin: 0 auto 50px auto;
   }  
 

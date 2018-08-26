@@ -18,15 +18,26 @@ router.post(
     console.log('前端发来的api信息\n', qs.parse(req.body));
     var data = qs.parse(req.body);
     var params = {};
-    for (var i=0,len=data.params.length;i<len;i++) {
-      params[data.params[i].key] = data.params[i].value;
+    if (data.params) {
+      for (var i=0,len=data.params.length;i<len;i++) {
+        params[data.params[i].key] = data.params[i].value;
+      }
     }
     // console.log('转化后的params：', params);
-    request.post({url: data.url, formData: params}, function(err, r, body) {
-      // console.log('第三方api返回的res:', res);
-      // console.log('第三方api返回的data: ', body);
-      res.json({ success: true, message: '服务器已经收到了api信息', data: body });
-    });
+    if (data.method === "GET") {
+      request.get(data.url, function(err, r, body) {
+        // console.log('第三方api返回的res:', r);
+        console.log('第三方api返回的data: ', body);
+        res.json({ success: true, message: '服务器已经收到了api信息', data: body });
+      });
+    } else if (data.method === "POST") {
+      request.post({url: data.url, formData: params}, function(err, r, body) {
+        // console.log('第三方api返回的res:', r);
+        console.log('第三方api返回的data: ', body);
+        res.json({ success: true, message: '服务器已经收到了api信息', data: body });
+      });
+    }
+    // TODO: PUT, DELETE request
   }
 );
 

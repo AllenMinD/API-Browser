@@ -44,17 +44,28 @@
     <div>
       <h1>返回结果</h1>
       <!-- <app-tree></app-tree> -->
-      <div v-loading="testLoading">
+      <!-- <div v-loading="testLoading">
         <tree-view :data="dataFromApi" :options="{maxDepth: 10}"></tree-view>
-      </div>
-      <br>
-      <hr>
+      </div> -->
+
+      <!-- <div v-loading="testLoading">
+        <app-visiable :jsonData="dataFromApi"></app-visiable>
+      </div> -->
+
+      <div v-loading="testLoading">
+        <app-visiable-table :jsonData="dataFromApi"></app-visiable-table>
+      </div> 
+      
+      <!-- <div v-html="ppTable"></div> -->
     </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios';
+  import {prettyPrint} from '../../prettyprint.js';
+  import Visiable from '../Visiable.vue';
+  import VisiableTable from '../VisiableTable.vue';
   export default {
     props: ['apiId'],
     data: function() {
@@ -70,6 +81,9 @@
       },
       testLoading: function() {
         return this.$store.getters.getTestLoading;
+      },
+      ppTable: function() {
+        return prettyPrint(this.dataFromApi, {expanded: true, maxDepth: 10}).innerHTML;
       }
     },
     methods: {
@@ -133,6 +147,10 @@
             }
           }
         }).catch(function(err) {console.log(err)});
+    },
+    components: {
+      AppVisiable: Visiable,
+      AppVisiableTable: VisiableTable
     }
   }
 </script>

@@ -41,9 +41,10 @@
 <style scoped>
   #search {
     height: 350px;
-    background-image: url('../assets/LowPoly.jpg');
-    background-repeat: no-repeat;
+    /* background-image: url('../assets/LowPoly.jpg'); */
+    /* background-repeat: no-repeat; */
     /* background-size: 100% 350px; */
+    background: linear-gradient(to bottom, #409EFF , #fff); /* 标准的语法 */
   }
 
   #searchTitle {

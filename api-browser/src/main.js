@@ -14,6 +14,13 @@ import { faBullhorn } from '@fortawesome/free-solid-svg-icons';
 import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { faStar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+// 引入vue-easytable样式、table 和 分页组件
+import 'vue-easytable/libs/themes-base/index.css';
+import {VTable,VPagination} from 'vue-easytable';
+
+// vue-easytable
+Vue.component(VTable.name, VTable);
+Vue.component(VPagination.name, VPagination);
 
 // fontawesome
 library.add(faCoffee);

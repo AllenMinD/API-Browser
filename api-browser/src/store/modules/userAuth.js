@@ -4,6 +4,8 @@ var qs = require('qs');
 
 var reqUrl = 'http://localhost:3000';
 
+var that = this;
+
 var state = {
   token: null,
   userName: null,
@@ -69,7 +71,7 @@ var actions = {
     }).then(function(res) {
       // console.log('登录：', res);
       if (res.data.success) {
-        alert('登录成功');
+        // alert('登录成功');
         var now = new Date();
         var expirationDate = new Date(now.getTime() + res.data.expiresIn);
         var resData = {

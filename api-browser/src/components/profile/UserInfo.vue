@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="profile-box">
     <!-- 用户名 -->
     <div class="user-info">
       <font-awesome-icon icon="user" size="lg" style="color: #c6e2ff"/>&nbsp;&nbsp;{{ username }}
@@ -37,5 +37,11 @@
   .user-info {
     margin-bottom: 15px;
     color: #909399;
+  }
+
+  .profile-box {
+    border-radius: 10px;
+    box-shadow: 0 0 20px #bbb;
+    padding: 20px;
   }
 </style>

@@ -103,10 +103,16 @@
         //   }
         // });
         if (this.publishApiForm.formData.url) {
-          alert('API信息提交成功!现在可以进行测试或直接发布api！');
+          this.$message({
+            message: 'API信息提交成功!现在可以进行测试或直接发布api！',
+            type: 'success'
+          });
           this.isSubmit = true;
         } else {
-          alert('api的URL是必须要填的！');
+          this.$message({
+            message: 'api的URL是必须要填的！',
+            type: 'warning'
+          });
         }
         var params = this.publishApiForm.formData.params;
         var params_object = {};  // { key1: true|false, key2: true|false } true表示必填，否者是选填
@@ -142,7 +148,10 @@
         var userName = this.$store.getters.getUserName;
         this.formData.author = userName;
         this.$store.dispatch('publishApi', this.formData);
-        alert('发布成功');
+        this.$message({
+          message: "发布成功",
+          type: "success"
+        });
         this.resetForm('publishApiForm');
       }
     }
