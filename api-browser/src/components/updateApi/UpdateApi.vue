@@ -1,8 +1,13 @@
 <template>
   <div>
-    <h1>修改API</h1>
-    <app-update-form v-if="api" :passApi="api"></app-update-form>
-    <app-test-api-result></app-test-api-result>
+    <h1 v-if="!isFullPage">修改API</h1>
+    <app-update-form v-if="api && !isFullPage" :passApi="api"></app-update-form>
+
+    <hr v-if="!isFullPage">
+
+    <transition name="slide" mode="out-in" type="animation">
+      <app-test-api-result></app-test-api-result>
+    </transition>
   </div>
 </template>
 
@@ -43,6 +48,11 @@
         that.$store.dispatch('storeApiToVuex', that.api);
       }).catch(function(error) {console.log(error)});      
     },
+    computed: {
+      isFullPage: function() {
+        return this.$store.getters.getIsFullPage;
+      }
+    },
     components: {
       appUpdateForm: UpdateForm,
       appTestApiResult: TestApiResult
@@ -50,4 +60,37 @@
   }
 </script>
 
-<style></style>
+<style scoped>
+  .slide-enter,
+  .slide-leave-to {
+    opacity: 0;
+  }
+
+  .slide-enter-active {
+    animation: slide-in .3s ease-out forwards;
+    transition: opacity .3s;
+  }
+
+  .slide-leave-active {
+    animation: slide-out .3s ease-out forwards;
+    transition: opacity .3s;
+  }
+
+  @keyframes slide-in {
+    from {
+      transform: translateY(-30px);
+    }
+    to {
+      transform:  translateY(0px);
+    }
+  }
+
+  @keyframes slide-out {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform:  translateY(-30px);
+    }
+  }  
+</style>

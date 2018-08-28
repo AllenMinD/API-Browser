@@ -6,6 +6,7 @@ axios.defaults.baseURL = 'http://localhost:3000';
 
 var state = {
   isTesting: false,
+  isFullPage: false,
   api: {
     title: null,
     url: null,
@@ -39,6 +40,9 @@ var getters = {
   },
   getSearchApisList: function(state) {
     return state.searchApisList;
+  },
+  getIsFullPage: function(state) {
+    return state.isFullPage;
   }
 };
 
@@ -75,6 +79,9 @@ var mutations = {
   },
   setSearchApisList: function(state, apiList) {
     state.searchApisList = apiList;
+  },
+  setIsFullPage: function(state, isFullPage) {
+    state.isFullPage = isFullPage;
   }
 };
 

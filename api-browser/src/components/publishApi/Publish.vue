@@ -1,8 +1,10 @@
 <template>
   <div>
-    <h1>发布API</h1>
-    <app-publish-form></app-publish-form>
+    <h1 v-if="!isFullPage">发布API</h1>
+    <app-publish-form v-if="!isFullPage"></app-publish-form>
     
+    <hr v-if="!isFullPage">
+
     <transition name="slide" mode="out-in" type="animation">
       <app-test-api-result></app-test-api-result>
     </transition>
@@ -17,6 +19,11 @@
     components: {
       appPublishForm: PublishForm,
       appTestApiResult: TestApiResult
+    },
+    computed: {
+      isFullPage: function() {
+        return this.$store.getters.getIsFullPage;
+      }
     },
     created: function() {
       // 重置Vuex中的isTesting的状态

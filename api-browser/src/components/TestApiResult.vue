@@ -1,11 +1,10 @@
 <template>
   <div v-if="isTest">
-    <hr>
-    <h1>测试API</h1>
+    <h1 v-if="!isFullPage">测试API</h1>
     <p v-if="!api.url">（测试前需先提交最新的API信息）</p>
     
     <el-form
-      v-if="api.url"
+      v-if="api.url && !isFullPage"
       :model="testApiForm" 
       ref="testApiForm" 
       label-width="100px" 
@@ -38,17 +37,20 @@
     <div>
       <h1>返回结果</h1>
       <!-- <app-tree></app-tree> -->
-      <div v-loading="testLoading">
+      <!-- <div v-loading="testLoading">
         <tree-view :data="dataFromApi" :options="{maxDepth: 10}"></tree-view>
-      </div>
-      <br>
-      <hr>
+      </div> -->
+      <div v-loading="testLoading">
+        <app-visiable-table :jsonData="dataFromApi"></app-visiable-table>
+      </div> 
+
     </div>
   </div>
 </template>
 
 <script>
   import axios from 'axios';
+  import VisiableTable from './VisiableTable.vue';
 
   export default {
     data: function() {
@@ -83,6 +85,9 @@
       },
       testLoading: function() {
         return this.$store.getters.getTestLoading;
+      },
+      isFullPage: function() {
+        return this.$store.getters.getIsFullPage;
       }
     },
     methods: {
@@ -106,6 +111,7 @@
       },
     },
     components: {
+      AppVisiableTable: VisiableTable
     }
   }
 </script>

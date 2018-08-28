@@ -1,8 +1,9 @@
 <template>
   <div v-if="api">
-    <h1>{{ api.title }}</h1>
+    <h1 v-if="!isFullPage">{{ api.title }}</h1>
 
     <el-form
+      v-if="!isFullPage"
       :model="testApiForm" 
       ref="testApiForm" 
       label-width="100px" 
@@ -48,10 +49,6 @@
         <tree-view :data="dataFromApi" :options="{maxDepth: 10}"></tree-view>
       </div> -->
 
-      <!-- <div v-loading="testLoading">
-        <app-visiable :jsonData="dataFromApi"></app-visiable>
-      </div> -->
-
       <div v-loading="testLoading">
         <app-visiable-table :jsonData="dataFromApi"></app-visiable-table>
       </div> 
@@ -64,7 +61,6 @@
 <script>
   import axios from 'axios';
   import {prettyPrint} from '../../prettyprint.js';
-  import Visiable from '../Visiable.vue';
   import VisiableTable from '../VisiableTable.vue';
   export default {
     props: ['apiId'],
@@ -84,6 +80,9 @@
       },
       ppTable: function() {
         return prettyPrint(this.dataFromApi, {expanded: true, maxDepth: 10}).innerHTML;
+      },
+      isFullPage: function() {
+        return this.$store.getters.getIsFullPage;
       }
     },
     methods: {
@@ -149,7 +148,6 @@
         }).catch(function(err) {console.log(err)});
     },
     components: {
-      AppVisiable: Visiable,
       AppVisiableTable: VisiableTable
     }
   }

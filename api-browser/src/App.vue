@@ -1,7 +1,7 @@
 <template>
 
   <el-container>
-    <el-header height="65px">
+    <el-header height="65px" v-if="!isFullPage">
       <app-header></app-header>
     </el-header>
 
@@ -11,7 +11,7 @@
       </transition>
 
       <div class="el-content">
-        <el-row :gutter="0">
+        <el-row :gutter="0" v-if="!isFullPage">
           <el-col :span="6"><div class="grid-content"></div></el-col>
           <el-col :span="12"><div class="grid-content">
             <transition name="slide" mode="out-in" type="animation" appear>
@@ -19,6 +19,17 @@
             </transition>
           </div></el-col>
           <el-col :span="6"><div class="grid-content"></div></el-col>
+        </el-row>
+        
+        <!-- 当用户使用“全屏”查看表格时 -->
+        <el-row :gutter="0" v-if="isFullPage">
+          <el-col :span="1"><div class="grid-content"></div></el-col>
+          <el-col :span="22"><div class="grid-content">
+            <transition name="slide" mode="out-in" type="animation" appear>
+              <router-view></router-view>
+            </transition>
+          </div></el-col>
+          <el-col :span="1"><div class="grid-content"></div></el-col>
         </el-row>
       </div>
     </el-main>
@@ -40,6 +51,11 @@
     components: {
       appHeader: Header,
       appSearch: Search
+    },
+    computed: {
+      isFullPage: function() {
+        return this.$store.getters.getIsFullPage;
+      }
     },
     created: function() {
       this.$store.dispatch('tryAutoLogIn');
