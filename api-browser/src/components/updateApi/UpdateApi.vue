@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h1 v-if="!isFullPage">修改API</h1>
-    <app-update-form v-if="api && !isFullPage" :passApi="api"></app-update-form>
-
-    <hr v-if="!isFullPage">
+    <div class="white-box-full">
+      <h1 v-if="!isFullPage">修改API</h1>
+      <app-update-form v-if="api && !isFullPage" :passApi="api"></app-update-form>
+    </div>
 
     <transition name="slide" mode="out-in" type="animation">
       <app-test-api-result></app-test-api-result>
@@ -25,11 +25,12 @@
     },
     created: function() {
       var that = this;
+      var reqUrl = this.$store.getters.getReqUrl;
       // 重置Vuex中的isTesting的状态
       this.$store.commit('resetTestState');
       // 获取api
       axios.get(
-        'http://localhost:3000/api/getApiById?apiId=' + that.apiId
+        reqUrl + '/api/getApiById?apiId=' + that.apiId
       ).then(function(res) {
         console.log('根据id查询api的结果：', res);
         that.api = res.data.data;
@@ -39,12 +40,25 @@
         for (var key in that.api.params) {
           var newItem = {
             key: key,
-            value: '',
-            necessary: that.api.params[key]?'必填':'选填'
+            default: that.api.params[key].default,
+            necessary: that.api.params[key].necessary === 'true'?'必填':'选填'
           };
           trans_params.push(newItem);
         }
         that.api.params = trans_params;
+        // 转化tags从数组为对象数组
+        // [{tagName: 'xxx'}, {tagName: 'xxx'}, ...]
+        var trans_tags = [];
+        for (var i=0,len=that.api.tags.length;i<len;i++) {
+          var newObj = {
+            tagName: that.api.tags[i]
+          };
+          trans_tags.push(newObj);
+        }
+        if (trans_tags.length === 0) {
+          trans_tags.push({tagName: ""});
+        }
+        that.api.tags = trans_tags;
         that.$store.dispatch('storeApiToVuex', that.api);
       }).catch(function(error) {console.log(error)});      
     },

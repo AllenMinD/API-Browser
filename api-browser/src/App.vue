@@ -12,13 +12,13 @@
 
       <div class="el-content">
         <el-row :gutter="0" v-if="!isFullPage">
-          <el-col :span="6"><div class="grid-content"></div></el-col>
-          <el-col :span="12"><div class="grid-content">
+          <el-col :span="5"><div class="grid-content"></div></el-col>
+          <el-col :span="14"><div class="grid-content">
             <transition name="slide" mode="out-in" type="animation" appear>
               <router-view></router-view>
             </transition>
           </div></el-col>
-          <el-col :span="6"><div class="grid-content"></div></el-col>
+          <el-col :span="5"><div class="grid-content"></div></el-col>
         </el-row>
         
         <!-- 当用户使用“全屏”查看表格时 -->
@@ -88,6 +88,7 @@
 
   body {
     height: 100%;
+    background-color: #f7f7f7;
   }
 
   .el-container {
@@ -103,12 +104,22 @@
   }
 
   .white-box {
+    background-color: #fff;
     border-radius: 7px;
     box-shadow: 0 0 20px #999;
     padding: 30px 40px;
     width: 55%;
     margin: 0 auto 50px auto;
   }  
+
+  .white-box-full {
+    background-color: #fff;
+    border-radius: 7px;
+    box-shadow: 0 0 20px #999;
+    padding: 30px 40px;
+    width: 100%;
+    margin: 20px auto 20px auto;
+  }
 
   .grid-content {
     border-radius: 4px;

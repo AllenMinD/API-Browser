@@ -12,7 +12,7 @@ require('../passport')(passport);
 // 从前端获取api信息，并使用这些信息发送请求给第三方api的服务器，从而测试api
 router.post(
   '/testApi',
-  passport.authenticate('bearer', { session: false }),
+  //passport.authenticate('bearer', { session: false }),
   function(req, res) {
     res.header({"Access-Control-Allow-Origin": "*"});
     console.log('前端发来的api信息\n', qs.parse(req.body));
@@ -20,21 +20,41 @@ router.post(
     var params = {};
     if (data.params) {
       for (var i=0,len=data.params.length;i<len;i++) {
-        params[data.params[i].key] = data.params[i].value;
+        params[data.params[i].key] = data.params[i].value?data.params[i].value:data.params[i].default;
       }
     }
     // console.log('转化后的params：', params);
     if (data.method === "GET") {
-      request.get(data.url, function(err, r, body) {
-        // console.log('第三方api返回的res:', r);
-        console.log('第三方api返回的data: ', body);
-        res.json({ success: true, message: '服务器已经收到了api信息', data: body });
+      var url_get = data.url;
+      if (params) {
+        // 如果有参数，则进行字符串拼接，把参数凭借到url后面
+        url_get += '?';
+        for (var key in params) {
+          url_get += key + '=' + params[key] + '&';
+        }
+        url_get = url_get.slice(0, url_get.length-1);  // 把最后的'&'去掉
+      }
+      console.log('get请求最终的url', url_get);
+      request.get(encodeURI(url_get), function(err, r, body) {
+        if (err) {
+          console.log("错误信息：", err);
+          res.json({ success: false, message: '请求发送失败' });
+        } else {
+          // console.log('第三方api返回的res:', r);
+          console.log('第三方api返回的data: ', body);
+          res.json({ success: true, message: '发送请求成功', data: body });
+        }
       });
     } else if (data.method === "POST") {
       request.post({url: data.url, formData: params}, function(err, r, body) {
-        // console.log('第三方api返回的res:', r);
-        console.log('第三方api返回的data: ', body);
-        res.json({ success: true, message: '服务器已经收到了api信息', data: body });
+        if (err) {
+          console.log("错误信息：", err);
+          res.json({ success: false, message: '请求发送失败' });
+        } else {
+          // console.log('第三方api返回的res:', r);
+          console.log('第三方api返回的data: ', body);
+          res.json({ success: true, message: '发送请求成功', data: body });
+        }
       });
     }
     // TODO: PUT, DELETE request
@@ -71,9 +91,10 @@ router.post(
         params: data.params,
         method: data.method,
         summary: data.summary,
-        // tags: data.tags.split(','),
+        tags: data.tags,
         stars: 0,
-        author: data.author
+        author: data.author,
+        showProperties: data.showProperties
       });
       // 把api信息存入数据库的apis集合中
       newApi.save(function(err) {
@@ -171,8 +192,9 @@ router.post(
         method: data.method,
         methodUrl: data.method + req.body.url,
         params: data.params,
-        summary: data.summary
-        // tags: data.tags
+        summary: data.summary,
+        tags: data.tags,
+        showProperties: data.showProperties
       },
       { new: true },
       function(err, newApi) {
@@ -366,6 +388,41 @@ router.options('/getMyStars', function(req, res) {
   res.send();
 });
 
+// 获取对应一类标签的API
+router.get(
+  '/getApiByTag', 
+  function(req, res) {
+    res.header({"Access-Control-Allow-Origin": "*"});
+    // console.log('来自前端的keyword:', req.query.keyword);
+    var query = new RegExp(req.query.tag, 'gi');
+    var findInTags = Api.find({ tags: query }).exec();
+    Promise.all([findInTags]).then(function(results) {
+      // console.log('查询结果：', results);
+      // 把结果合成一个数组方便返回
+      var resArray = [];
+      for (var i=0,len=results.length;i<len;i++) {
+        var strArr = JSON.stringify(resArray);
+        if (results[i] !== [] && strArr.indexOf(JSON.stringify(results[i][0])) == -1 ) {
+          resArray = resArray.concat(results[i]);
+        }
+      }
+      // console.log('合并后的结果:', resArray);
+      // done();
+      res.json({ success: true, message: '服务器已经收到了关键字', data: resArray });
+    });
+    // res.json({ success: true, message: '服务器已经收到' });
+  }
+);
+
+// 响应/getApiByTag的预检响应
+router.options('/getApiByTag', function(req, res) {
+  console.log('收到OPTIONS请求');
+  res.header({"Access-Control-Allow-Origin": "*"});
+  res.header({"Access-Control-Request-Method": "GET, POST, PUT"});
+  res.header({"Access-Control-Allow-Headers": "*"});
+  res.send();
+});
+
 
 // 搜索API
 router.get('/search', function(req, res) {
@@ -392,6 +449,56 @@ router.get('/search', function(req, res) {
 
 // 响应/search的预检响应
 router.options('/search', function(req, res) {
+  console.log('收到OPTIONS请求');
+  res.header({"Access-Control-Allow-Origin": "*"});
+  res.header({"Access-Control-Request-Method": "GET, POST, PUT"});
+  res.header({"Access-Control-Allow-Headers": "*"});
+  res.send();
+});
+
+// 把修改后的数据发送会第三方服务器
+router.post(
+  '/sendBackData',
+  passport.authenticate('bearer', { session: false }),
+  function(req, res) {
+    res.header({"Access-Control-Allow-Origin": "*"});
+    console.log('前端发来的api信息\n', qs.parse(req.body));
+    var data = qs.parse(req.body);
+    var params = {};
+    if (data.params) {
+      for (var i=0,len=data.params.length;i<len;i++) {
+        params[data.params[i].key] = data.params[i].value;
+      }
+    }
+    if (data.method === "POST") {
+      request({
+        method: "POST",
+        uri: data.url,
+        multipart: [{ 
+              'content-type': 'application/json',
+              body: JSON.stringify(params)
+            }
+            , { body: 'I am an attachment' }
+          ]
+        },
+        function(err, r, body) {
+          if (err) {
+            console.log("错误信息：", err);
+            res.json({ success: false, message: '请求发送失败' });
+          } else {
+            // console.log('第三方api返回的res:', r);
+            console.log('第三方api返回的data: ', body);
+            res.json({ success: true, message: '发送请求成功', data: body });
+          }
+        }
+      );
+    }
+    // TODO: PUT, DELETE request
+  }
+);
+
+// 响应/sendBackData的“预检”请求
+router.options('/sendBackData', function(req, res) {
   console.log('收到OPTIONS请求');
   res.header({"Access-Control-Allow-Origin": "*"});
   res.header({"Access-Control-Request-Method": "GET, POST, PUT"});

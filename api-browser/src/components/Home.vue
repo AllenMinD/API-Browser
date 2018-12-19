@@ -3,37 +3,43 @@
     <app-search></app-search>
 
     <div class="el-content">
-      <el-row :gutter="20">
-        <el-col :span="6"><div class="grid-content"></div></el-col>
-        <el-col :span="12"><div class="grid-content">
+      <el-row :gutter="0">
+        <el-col :span="3"><div class="grid-content"></div></el-col>
+        <el-col :span="18"><div class="grid-content">
           <!-- <p v-if="isAuth">当前登录用户：{{ username }}</p> -->
-          <span v-if="isSearching">搜索结果：</span>
-          <el-button v-if="isSearching" size="mini" @click="backToAllApisList">返回</el-button>
-          <ul class="all-apis">
-            <li v-for="(api, index) in apiList" :key="index">
-              <el-row>
-                <el-col :span="20"><div class="grid-content">
-                  <div class="api-title">
-                    {{ api.title }}
-                    &nbsp;<span class="api-method">{{ api.method }}</span>
-                  </div>
-                  <div class="api-info api-url">
-                    <font-awesome-icon icon="link" style="color: #77bbff"/>&nbsp;
-                    {{ api.url }}
-                  </div>
-                  <div class="api-info api-stars">
-                    <font-awesome-icon icon="star" style="color: #77bbff"/>&nbsp;
-                    {{ api.stars }}
-                  </div>
-                </div></el-col>
-                <el-col :span="4"><div class="grid-content">
-                  <router-link :to="'/useapi/' + api._id" tag="span"><el-button type="primary">查看</el-button></router-link>
-                </div></el-col>
-              </el-row>
-            </li>
-          </ul>
+          <!-- <app-api-list :apis="apiList"></app-api-list> -->
+          <div class="white-box-full api-list-panel">
+            <div class="tag-tabs-menu" v-if="!isSearching">
+              <ul class="tag-tabs">
+                <li 
+                  :style="{ marginLeft: marginLeftData }"
+                  :class="{ 'active': allTag.isActive }" 
+                  @click="switchTag('全部', $event)">
+                  全部
+                </li>
+                <li 
+                  v-for="(tag, index) in tags" 
+                  :key="index" 
+                  :class="{ active: tag.isActive }" 
+                  @click="switchTag(tag, $event)">
+                  {{ tag.tagName }}
+                </li>
+              </ul>
+              <div class="arrow-btn">
+                <i class="el-icon-arrow-left" @click="leftMove($event)"></i>
+                <i class="el-icon-arrow-right" @click="rightMove($event)"></i>
+              </div>
+            </div>
+            <div v-if="isSearching" class="search-back-btn">
+              <span>搜索结果：</span>
+              <el-button size="mini" @click="backToAllApisList">返回</el-button>
+            </div>
+            <div class="api-list-content">
+              <app-api-list-square :apis="apiList"></app-api-list-square>
+            </div>
+          </div>
         </div></el-col>
-        <el-col :span="6"><div class="grid-content"></div></el-col>
+        <el-col :span="3"><div class="grid-content"></div></el-col>
       </el-row>
     </div>
   </div>  
@@ -42,9 +48,30 @@
 <script>
   import axios from 'axios';
   import Search from './Search.vue';
+  import ApiList from './ApiList.vue';
+  import ApiListSquare from './ApiListSquare.vue';
+
   export default {
     data: function() {
       return {
+        marginLeftData: '0px',
+        isAll: true,
+        allTag: { tagName: "全部", isActive: true },
+        tags: [
+          { tagName: "新闻资讯", isActive: false },
+          { tagName: "教育培训", isActive: false },
+          { tagName: "实时监控", isActive: false },
+          { tagName: "电商购物", isActive: false },
+          { tagName: "游戏", isActive: false },
+          { tagName: "工具", isActive: false },
+          { tagName: "书影音", isActive: false },
+          { tagName: "体育", isActive: false },
+          { tagName: "交通", isActive: false },
+          { tagName: "旅游", isActive: false },
+          { tagName: "理财", isActive: false },
+          { tagName: "其他", isActive: false }
+        ],
+        lastActive: null,
       };
     },
     computed: {
@@ -59,72 +86,154 @@
         return search.length === 0?false:true;
       },
       apiList: function() {
-        var all = this.$store.getters.getAllApisList;
-        var search = this.$store.getters.getSearchApisList;
-        return search.length !== 0?search:all;
+        var show = null;
+        if (this.isAll === true) {
+          var all = this.$store.getters.getAllApisList;
+          show = all;
+        } else {
+          var tag = this.$store.getters.getTagApisList;
+          show = tag;
+        }
+        var search = this.$store.getters.getSearchApisList;  
+        return search.length !== 0?search:show;
       }
     },
     methods: {
       backToAllApisList: function() {
         this.$store.commit('setSearchApisList', []);
+      },
+      leftMove: function(event) {
+        var num = this.marginLeftData.slice(0, this.marginLeftData.indexOf('px'));
+        if ((parseInt(num) + 60) < 0) {
+          this.marginLeftData = (parseInt(num) + 60) + 'px';
+        } else {
+          this.marginLeftData = 0 + 'px';
+        }
+      },
+      rightMove: function(event) {
+        // console.log(event.target.parentNode.previousSibling.previousSibling.offsetWidth);
+        var num = this.marginLeftData.slice(0, this.marginLeftData.indexOf('px'));
+        var scrollMargin = (this.tags.length + 1) * 88 - event.target.parentNode.previousSibling.previousSibling.offsetWidth;
+        if ((parseInt(num) - 60) > -scrollMargin) {
+          this.marginLeftData = (parseInt(num) - 60) + 'px';
+        } else {
+          this.marginLeftData = -scrollMargin + 'px';
+        }
+      },
+      switchTag: function(tag, event) {
+        // console.log(event.target.innerHTML.trim());
+        var tagKeyword = event.target.innerHTML.trim();
+        if (tagKeyword !== '全部') {
+          this.isAll = false;
+          this.lastActive.isActive = false;
+          this.lastActive = tag;
+          tag.isActive = true;
+          var reqUrl = this.$store.getters.getReqUrl;
+          var that = this;
+          axios.get(reqUrl + '/api/getApiByTag?tag=' + tagKeyword)
+              .then(function(res) {
+                // console.log(res.data.data); // 标签为【tag】的api
+                that.$store.commit('setTagApisList', res.data.data);
+              }).catch(function(err) {console.log(err)});
+        } else {
+          this.isAll = true;
+          this.lastActive.isActive = false;
+          this.lastActive = this.allTag;
+          this.allTag.isActive = true;
+        }
       }
     },
     components: {
-      appSearch: Search
+      appSearch: Search,
+      appApiList: ApiList,
+      appApiListSquare: ApiListSquare
     },
     created: function() {
       var that = this;
-      axios.get('http://localhost:3000/api/getAllApis')
+      var reqUrl = this.$store.getters.getReqUrl;
+      axios.get(reqUrl + '/api/getAllApis')
         .then(function(res) {
           console.log(res);
           // console.log(res.data.data);
           that.$store.commit('setAllApisList', res.data.data);
         }).catch(function(error) {console.log(error)}
-      );      
+      );
+
+      this.lastActive = this.allTag;   
     }
   }  
 </script>
 
 <style scoped>
-  .all-apis {
-    list-style: none; 
-    padding-left: 0; 
+  .api-list-panel {
+    margin-top: -60px;
+    padding: 0;
   }
 
-  .all-apis > li {
-    padding: 20px;
-    box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04);
-    border-left: 3px solid #409EFF;
-    border-radius: 5px;
-    margin: 10px;
-    transition: box-shadow .5s
+  .tag-tabs-menu {
+    height: 59px;
+    border-bottom: 1px solid #eee;
   }
 
-  .all-apis > li:hover {
-    box-shadow: 0 10px 14px 0 rgba(0,0,0,.12), 0 0 16px 0 rgba(0,0,0,.04);
+  .tag-tabs {
+    width: 90%;
+    height: 100%;
+    list-style: none;
+    padding: 0;
+    margin: 0 20px;
+    display: inline-block;
+    overflow: hidden;
   }
 
-  .api-title {
-    font-size: 17px;
-    margin-bottom: 20px;
+  .tag-tabs > li:nth-child(1) {
+    transition: margin-left .3s;
   }
 
-  .api-method {
-    border-radius: 6px;
-    border: 1px solid #77bbff;
-    font-size: 12px;
-    padding: 0.5px 3px;
-    color: #77bbff;
+  .arrow-btn {
+    height: 100%;
+    margin: 0;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    display: inline-block;
+    overflow: hidden;
+  } 
+
+  .arrow-btn i {
+    display: inline-block;
   }
 
-  .api-info {
-    margin-bottom: 10px;
-    color: #909399;
+  .arrow-btn i:hover {
+    cursor: pointer;
   }
 
-  .api-url {
-    overflow: hidden;  /* 【核心代码】 超出文本不显示 */
-    text-overflow: ellipsis;  /* 【核心代码】 超出的区域的问题用省略号显示 */
-    white-space: nowrap;  /* 文本不允许换行 */
-  }  
+  .tag-tabs li {
+    display: inline-block;
+/*     padding-top: 20px;
+    padding-bottom: 20px; */
+    padding: 20px 20px 15px 20px;
+    transition: background-color .5s, border-bottom .5s;
+  }
+
+  .tag-tabs li:hover {
+    cursor: pointer;
+    background-color: #ecf5ff;
+  }
+
+/*   .tag-tabs li + li {
+    padding-left: 40px;
+  } */
+
+  .api-list-content {
+    padding: 20px 40px 30px 40px;
+  }
+  
+  .search-back-btn {
+    padding-top: 30px;
+    padding-left: 70px;
+  }
+
+  .active {
+    border-bottom: 3px solid #409eff;
+  }
+
 </style>

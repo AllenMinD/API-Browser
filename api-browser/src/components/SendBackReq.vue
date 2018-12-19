@@ -67,25 +67,12 @@
           var params = {};  // 发回后台的数据
           var that = this;
           params.token = this.sendBackForm.token;
-          params.data = this.sendBackData[0];
+          params.url = that.sendBackForm.url;
+          params.method = 'POST';
+          params.data = this.sendBackData;
           // 发送请求
-          axios.post(
-            that.sendBackForm.url,
-            qs.stringify(params),
-            {
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              }
-            }).then(function(res) {
-              console.log('服务器返回的结果', res);
-            }).catch(function(err) {
-              console.log(err)
-              that.$message({
-                message: '糟糕，发送请求错误！',
-                type: 'error'
-              });
-            }
-          );
+          // 把修改后的JSON数据发给api-browser的后端，然后再由服务器转发请求到另一台服务器
+          this.$store.dispatch('sendBackData', params);
         }
       }
     }

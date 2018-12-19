@@ -24,8 +24,9 @@
     methods: {
       search: function() {
         var that = this;
+        var reqUrl = this.$store.getters.getReqUrl;
         if (this.keyword) {
-          axios.get('http://localhost:3000/api/search?keyword=' + this.keyword)
+          axios.get(reqUrl + '/api/search?keyword=' + this.keyword)
           .then(function(res) {
             console.log('搜索API返回的结果', res);
             that.$store.commit('setSearchApisList', res.data.data);
@@ -40,11 +41,13 @@
 
 <style scoped>
   #search {
-    height: 350px;
-    /* background-image: url('../assets/LowPoly.jpg'); */
+    height: 450px;
+    background: #8dc5ff url('../assets/bg.jpeg') no-repeat;
+    background-size: cover;
+    background-position: center;
     /* background-repeat: no-repeat; */
     /* background-size: 100% 350px; */
-    background: linear-gradient(to bottom, #409EFF , #fff); /* 标准的语法 */
+    /* background: linear-gradient(to bottom, #409EFF , #fff); */
   }
 
   #searchTitle {

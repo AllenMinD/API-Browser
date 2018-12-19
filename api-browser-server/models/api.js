@@ -31,6 +31,9 @@ var ApiSchema = new Schema({
   },
   author: {
     type: String
+  },
+  showProperties: {
+    type: Array
   }
 });
 

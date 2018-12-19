@@ -42,8 +42,8 @@
 <style scoped>
   @font-face {
     /* font-properties */
-    font-family: 'Mahalo';
-    src: url('../assets/Mahalo.otf');
+    font-family: 'Lato';
+    src: url('../assets/Lato-Regular.ttf');
     font-weight: normal;    
     font-style: normal; 
   }
@@ -52,16 +52,18 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    background-color: #409eff;
+    background-color: #fff;
+    /* background: transparent; */
     /* border-bottom: 1px solid #e6e6e6; */
-    border-bottom: 1px solid #fff;
+    border-bottom: 1px solid #F2F6FC;
+    box-shadow: 0 5px 8px #F2F6FC;
   }
 
   .my-menu-logo,
   .my-menu-item-extra {
     font-size: 14px;
     /* color: #909399; */
-    color: #fff;
+    color: #409eff;
     display: inline-block;
     padding: 0 20px;
     margin: 0;
@@ -80,9 +82,9 @@
   }
 
   .my-menu-logo {
-    color: #fff;
+    color: #409eff;
     font-size: 1.6em;
-    font-family: 'Mahalo';
+    font-family: 'Lato';
   }
 
   .my-menu-logo:hover {
@@ -94,23 +96,23 @@
     font-family: 'Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,SimSun,sans-serif';
     font-size: 14px;
     /* color: #909399; */
-    color: #DCDFE6;
+    color: #909399;
     display: inline-block;
     padding: 0 20px;
     margin: 0;
-    height: 60px;
-    line-height: 60px;
+    height: 66px;
+    line-height: 66px;
     /* border-bottom: 2px solid #fff; */
-    border-bottom: 2px solid #409eff;
+    /* border-bottom: 2px solid #409eff; */
     transition: border-color .3s, color .3s;
   }
 
   .my-menu-item:hover {
     cursor: pointer;
     /* color: #303133; */
-    color: #fff;
+    color: #409eff;
     /* border-bottom: 2px solid #409eff; */
-    border-bottom: 2px solid #fff;
+    /* border-bottom: 2px solid #409eff; */
   }
 
   .menu-right {
@@ -121,8 +123,8 @@
   .active {
     cursor: pointer;
     /* color: #303133; */
-    color: #fff;
+    color: #409eff;
     /* border-bottom: 2px solid #409eff; */
-    border-bottom: 2px solid #fff;
+    /* border-bottom: 2px solid #409eff; */
   }
 </style>

@@ -3,6 +3,7 @@ import router from '../../router';
 var qs = require('qs');
 
 var reqUrl = 'http://localhost:3000';
+// var reqUrl = 'http://120.79.220.199:3000';
 
 var that = this;
 
@@ -114,13 +115,13 @@ var actions = {
   tryAutoLogIn: function(context) {
     var token = localStorage.getItem('token');
     if (!token) {
-      router.replace('/signin');
+      // router.replace('/signin');
       return;
     }
     var expirationDate = localStorage.getItem('expirationDate');
     var now = new Date();
     if (now.toString() >= expirationDate) {
-      router.replace('/signin');
+      // router.replace('/signin');
       return;
     }
     var expiresIn = new Date(new Date(expirationDate).getTime() - now.getTime());

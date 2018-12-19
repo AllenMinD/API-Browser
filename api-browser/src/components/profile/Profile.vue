@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>个人</h1>
     <app-user-info></app-user-info>
     <br>
     <app-user-api-list></app-user-api-list>

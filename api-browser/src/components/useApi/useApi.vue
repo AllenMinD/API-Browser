@@ -1,48 +1,74 @@
 <template>
   <div v-if="api">
-    <h1 v-if="!isFullPage">{{ api.title }}</h1>
+    <div class="white-box-full" v-if="!isFullPage">      
+      <h1 v-if="!isFullPage">{{ api.title }}</h1>
+      <div class="api-info api-tags">
+        <el-tag 
+          class="api-tag"
+          size="small" 
+          type="info"
+          v-for="(tag, index) in api.tags"
+          :key="'tag' + index">
+          {{ tag }}
+        </el-tag>
+      </div>
 
-    <el-form
-      v-if="!isFullPage"
-      :model="testApiForm" 
-      ref="testApiForm" 
-      label-width="100px" 
-      label-position="left">
-      <!-- url -->
-      <el-form-item label="URL">
-        <el-input type="text" v-model="api.url" disabled>
-          <template slot="prepend">{{ api.method }}</template>
-        </el-input>
-      </el-form-item>
-      <!-- 参数 -->
-      <el-form-item 
-        :inline="true" 
-        :label="'参数' + ' (' + param.necessary + ')'"
-        v-for="(param, index) in api.params"
-        :key="index">
-        <el-input style="width: 40%" placeholder="value" v-model="param.value">
-          <template slot="prepend">{{ param.key }}</template>
-        </el-input>
-      </el-form-item>
-      <el-form-item label="接口说明">
-        <p class="api-summary">
-          &#10;{{ api.summary }}
-        </p>  
-      </el-form-item>
-      <el-form-item> 
-        <el-button type="primary" @click="testApi">发送请求</el-button>
-        <el-button @click="collectApi" style="color: #909399" v-if="!isCollected">
-          <font-awesome-icon icon="star"/>
-          收藏 {{ api.stars }}
-        </el-button>
-        <el-button @click="cancelCollectApi" type="primary" style="color: #fff" v-else>
-          <font-awesome-icon icon="star"/>
-          已收藏 {{ api.stars }}
-        </el-button> 
-      </el-form-item>
-    </el-form>
+      <div class="api-info api-author">
+        <font-awesome-icon icon="user" style="color: #77bbff"/>&nbsp;
+        <router-link tag="span" :to="/profile/ + api.author">{{ api.author }}</router-link>
+      </div>
 
-    <div>
+      <el-button 
+        type="primary" 
+        style="width: 100%;margin-bottom: 15px" 
+        @click="showingDetail = !showingDetail">
+          <span class="el-icon-setting"></span>&nbsp;详情
+      </el-button>
+
+      <transition name="slide" mode="out-in" type="animation" appear>
+        <el-form
+          v-if="!isFullPage && showingDetail"
+          :model="testApiForm"
+          ref="testApiForm" 
+          label-width="100px" 
+          label-position="left">
+          <!-- url -->
+          <el-form-item label="URL">
+            <el-input type="text" v-model="api.url" disabled>
+              <template slot="prepend">{{ api.method }}</template>
+            </el-input>
+          </el-form-item>
+          <!-- 参数 -->
+          <el-form-item 
+            :inline="true" 
+            :label="'参数' + ' (' + param.necessary + ')'"
+            v-for="(param, index) in api.params"
+            :key="index">
+            <el-input style="width: 40%" placeholder="value" v-model="param.value">
+              <template slot="prepend">{{ param.key }}</template>
+            </el-input>
+          </el-form-item>
+          <el-form-item label="接口说明">
+            <p class="api-summary">
+              &#10;{{ api.summary }}
+            </p>  
+          </el-form-item>
+          <el-form-item> 
+            <el-button type="primary" @click="testApi">发送请求</el-button>
+            <el-button @click="collectApi" style="color: #909399" v-if="!isCollected">
+              <font-awesome-icon icon="star"/>
+              收藏 {{ api.stars }}
+            </el-button>
+            <el-button @click="cancelCollectApi" type="primary" style="color: #fff" v-else>
+              <font-awesome-icon icon="star"/>
+              已收藏 {{ api.stars }}
+            </el-button> 
+          </el-form-item>
+        </el-form>
+      </transition>
+    </div>
+
+    <div class="white-box-full">
       <h1>返回结果</h1>
       <!-- <app-tree></app-tree> -->
       <!-- <div v-loading="testLoading">
@@ -50,7 +76,7 @@
       </div> -->
 
       <div v-loading="testLoading">
-        <app-visiable-table :jsonData="dataFromApi"></app-visiable-table>
+        <app-visiable-table :jsonData="dataFromApi" :callType="callType"></app-visiable-table>
       </div> 
       
       <!-- <div v-html="ppTable"></div> -->
@@ -68,7 +94,9 @@
       return {
         api: null,
         testApiForm: null,
-        isCollected: false
+        isCollected: false,
+        showingDetail: false,
+        callType: 'useApi', // 这个状态用来标识是谁调用VisibleTable组件的 
       }
     },
     computed: {
@@ -110,31 +138,37 @@
     },
     created: function() {
       var that = this;
+      var reqUrl = this.$store.getters.getReqUrl;
       // 清除一下Vuex中的dataFromApi状态
       this.$store.commit('clearDataFromApi');
       // 获取api
       axios.get(
-        'http://localhost:3000/api/getApiById?apiId=' + that.apiId
+        reqUrl + '/api/getApiById?apiId=' + that.apiId
       ).then(function(res) {
         console.log('根据id查询api的结果：', res);
         that.api = res.data.data;
+        that.$store.dispatch('storeApiToVuex', that.api);
         // 转化params为数组，并且变为这样的形式 
         // [{key1: '', value1: '', necessary: true } , {key2: '', value2: '', necessary: true }]
-        var trans_params = [];
-        for (var key in that.api.params) {
-          var newItem = {
-            key: key,
-            value: '',
-            necessary: that.api.params[key]?'必填':'选填'
-          };
-          trans_params.push(newItem);
+        if (that.api.params) {
+          var trans_params = [];
+          for (var key in that.api.params) {
+            var newItem = {
+              key: key,
+              value: that.api.params[key].default,
+              necessary: that.api.params[key].necessary === 'true'?'必填':'选填'
+            };
+            trans_params.push(newItem);
+          }
+          that.api.params = trans_params;
         }
-        that.api.params = trans_params;
+        // 当用户进入这个页面时，就开始自动发送请求
+        that.testApi();  
       }).catch(function(error) {console.log(error)});
 
       // 发请求获取用户的myStars
       axios.get(
-        'http://localhost:3000/api/getMyStars?username=' + this.$store.getters.getUserName,
+        reqUrl + '/api/getMyStars?username=' + this.$store.getters.getUserName,
         { headers: { 'Authorization': localStorage.getItem('token') } }).
         then(function(res) {
           console.log('我的收藏getMyStars：', res.data.data);
@@ -157,9 +191,23 @@
   p.api-summary {
     display: block;
     text-indent: 0;
-    white-space: pre;
+    white-space: pre-wrap;
     line-height:25px;
     -webkit-margin-before: -40px;
     -webkit-margin-after: -20px;
+  }
+
+  .api-author {
+    cursor: pointer;
+    margin-bottom: 15px;
+    color: #909399;
+  }
+
+  .api-tags {
+    margin-bottom: 15px;
+  }
+
+  .api-tag + .api-tag {
+    margin-left: 10px;
   }
 </style>

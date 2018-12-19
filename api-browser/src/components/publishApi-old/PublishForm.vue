@@ -1,17 +1,17 @@
 <template>
   <el-form 
-    :model="updateApiForm" 
-    ref="updateApiForm" 
+    :model="publishApiForm" 
+    ref="publishApiForm" 
     label-width="100px" 
     label-position="left">
     <!-- 标题 -->
     <el-form-item label="标题" prop="formData.title">
-      <el-input v-model="updateApiForm.formData.title" type="text"></el-input>
+      <el-input v-model="publishApiForm.formData.title" type="text"></el-input>
     </el-form-item>
     <!-- 请求URL、请求方法 -->
     <el-form-item label="URL" prop="formData.url">
-      <el-input placeholder="http:// or https://" v-model="updateApiForm.formData.url" class="input-with-select">
-        <el-select style="width: 100px" v-model="updateApiForm.formData.method" slot="prepend" placeholder="GET">
+      <el-input placeholder="http:// or https://" v-model="publishApiForm.formData.url" class="input-with-select">
+        <el-select style="width: 100px" v-model="publishApiForm.formData.method" slot="prepend" placeholder="GET">
           <el-option label="GET" value="GET"></el-option>
           <el-option label="POST" value="POST"></el-option>
           <el-option label="PUT" value="PUT"></el-option>
@@ -25,31 +25,31 @@
     <el-form-item
       :inline="true" 
       :label="'参数 ' + index"
-      v-for="(param, index) in updateApiForm.formData.params"
+      v-for="(param, index) in publishApiForm.formData.params"
       :key="index">
       <el-input style="width: 40%" placeholder="key" v-model="param.key" :prop="'formData.params[' + index +'].key'">
-        <el-select style="width: 80px" v-model="param.necessary" slot="append" :prop="'formData.params[' + index +'].necessary'">
+        <el-select style="width: 80px" v-model="param.necessary" slot="append" placeholder="必填" :prop="'formData.params[' + index +'].necessary'">
           <el-option label="必填" value="必填"></el-option>
           <el-option label="选填" value="选填"></el-option>
         </el-select>
       </el-input>
       <el-input style="width: 40%" placeholder="默认值" v-model="param.default" type="text"></el-input>
       <el-button type="danger" icon="el-icon-close" circle @click="removeParam(param)"></el-button>
-      <el-button type="success" icon="el-icon-plus" circle v-if="index == updateApiForm.formData.params.length-1" @click="addParam"></el-button>
+      <el-button type="success" icon="el-icon-plus" circle v-if="index == publishApiForm.formData.params.length-1" @click="addParam"></el-button>
     </el-form-item>
     <el-form-item
       :inline="true"
-      v-if="updateApiForm.formData.params.length == 0">
+      v-if="publishApiForm.formData.params.length == 0">
       <el-button type="success" icon="el-icon-plus" round @click="addParam">添加参数</el-button>
     </el-form-item>
     <!-- 简介说明 -->
     <el-form-item label="简介说明" size="large" prop="formData.summary">
-      <el-input type="textarea" v-model="updateApiForm.formData.summary"></el-input>
+      <el-input type="textarea" v-model="publishApiForm.formData.summary"></el-input>
     </el-form-item>
     <el-form-item 
       :inline="true" 
       :label="'标签' + index" 
-      v-for="(tag, index) in updateApiForm.formData.tags"
+      v-for="(tag, index) in publishApiForm.formData.tags"
       :key="'tag' + index"
       size="large">
       <el-select style="width: 150px" v-model="tag.tagName" placeholder="请选择">
@@ -67,37 +67,42 @@
         <el-option label="理财" value="理财"></el-option>
         <el-option label="其他" value="其他"></el-option>
       </el-select>
-      <el-button type="danger" icon="el-icon-close" circle v-if="updateApiForm.formData.tags.length > 1" @click="removeTag(tag)"></el-button>
-      <el-button type="success" icon="el-icon-plus" circle v-if="index == updateApiForm.formData.tags.length-1" @click="addTag"></el-button>
+      <el-button type="danger" icon="el-icon-close" circle v-if="publishApiForm.formData.tags.length > 1" @click="removeTag(tag)"></el-button>
+      <el-button type="success" icon="el-icon-plus" circle v-if="index == publishApiForm.formData.tags.length-1" @click="addTag"></el-button>
     </el-form-item>
     <!-- 提交/清空表单-->
     <el-form-item size="large">
-      <el-button type="primary" @click="submitForm('updateApiForm')">提交</el-button>
+      <el-button type="primary" @click="submitForm('publishApiForm')">提交</el-button>
       <el-button type="warning" @click="testApi" :disabled="!isSubmit">测试</el-button>
-      <el-button type="success" @click="updateApi" :disabled="!isSubmit">更新</el-button>
-      <el-button @click="resetForm('updateApiForm')">重置</el-button>
-      <el-button type="danger" @click="deleteApi">删除API</el-button>
-      <div>（需要提交信息后才能测试和更新）</div>
+      <el-button type="success" @click="publishApi" :disabled="!isSubmit">发布</el-button>
+      <el-button @click="resetForm('publishApiForm')">重置</el-button>
+      <span> （需要提交信息后才能测试和发布）</span>
     </el-form-item>
   </el-form>  
 </template>
 
 <script>
-  import router from '../../router';
-
   export default {
-    props: ['passApi'],
     data: function() {
+      // var that = this;
+      // function getProperties() {
+      //   return that.$store.getters.getProperties;
+      // }
+
       return {
         isSubmit: false,
-        updateApiForm: {
+        publishApiForm: {
           formData: {
-            title: this.passApi.title,
-            url: this.passApi.url,
-            method: this.passApi.method,
-            params: this.passApi.params,
-            summary: this.passApi.summary,
-            tags: this.passApi.tags
+            title: '',
+            url: '',
+            method: 'GET',
+            params: [
+              { key: '', necessary: '必填', default: ''}
+            ],
+            summary: '',
+            tags: [
+              { tagName: '' }
+            ]
           },
         },
         formData: null,
@@ -105,31 +110,31 @@
     },
 
     computed: {
-      
+
     },
 
     methods: {
       removeParam: function(param) {
-        var index = this.updateApiForm.formData.params.indexOf(param);
+        var index = this.publishApiForm.formData.params.indexOf(param);
         if (index !== -1) {
-          this.updateApiForm.formData.params.splice(index, 1);
+          this.publishApiForm.formData.params.splice(index, 1);
         }
       },
       addParam: function() {
-        this.updateApiForm.formData.params.push({
+        this.publishApiForm.formData.params.push({
           key: '',
           necessary: '必填',
-          value: ''
+          default: ''
         });
       },
       removeTag: function(tag) {
-        var index = this.updateApiForm.formData.tags.indexOf(tag);
+        var index = this.publishApiForm.formData.tags.indexOf(tag);
         if (index !== -1) {
-          this.updateApiForm.formData.tags.splice(index, 1);
+          this.publishApiForm.formData.tags.splice(index, 1);
         }
       },
       addTag: function() {
-        this.updateApiForm.formData.tags.push({
+        this.publishApiForm.formData.tags.push({
           tagName: ''
         });
       },
@@ -142,7 +147,7 @@
         //     return false;
         //   }
         // });
-        if (this.updateApiForm.formData.url) {
+        if (this.publishApiForm.formData.url) {
           this.$message({
             message: 'API信息提交成功!现在可以进行测试或直接发布api！',
             type: 'success'
@@ -154,7 +159,7 @@
             type: 'warning'
           });
         }
-        var params = this.updateApiForm.formData.params;
+        var params = this.publishApiForm.formData.params;
         var params_object = {};  // { key1: { necessary: true|false, default: 'xxx'} , key2: { necessary: true|false, default: 'xxx'}  } necessary表示必填（true）还是选填（false）；default表示默认值
         for (var i=0,len=params.length;i<len;i++) {
           if (params[i].necessary == '必填') {
@@ -169,7 +174,7 @@
             };
           }
         }
-        var tags = this.updateApiForm.formData.tags;
+        var tags = this.publishApiForm.formData.tags;
         var tags_array = [];
         for (var i=0,len=tags.length;i<len;i++) {
           if (tags_array.indexOf(tags[i].tagName) === -1) {
@@ -178,55 +183,35 @@
         }
         //console.log('转化后的params对象', params_object);
         this.formData = {
-          title: this.updateApiForm.formData.title,
-          url: this.updateApiForm.formData.url,
-          method: this.updateApiForm.formData.method,
+          title: this.publishApiForm.formData.title,
+          url: this.publishApiForm.formData.url,
+          method: this.publishApiForm.formData.method,
           params: params_object,
-          summary: this.updateApiForm.formData.summary,
-          tags: tags_array,
-          id: this.passApi._id,
-          showProperties: this.passApi.showProperties
+          summary: this.publishApiForm.formData.summary,
+          tags: tags_array
         };
         console.log('提交的表单是：', this.formData);
         this.$store.dispatch('storeApiToVuex', this.formData);
       },
       resetForm: function(formName) {
         this.$refs[formName].resetFields();
-        this.updateApiForm.formData.method = "GET";
-        this.updateApiForm.formData.params = [{ key: '', necessary: '必填' }];
+        this.publishApiForm.formData.method = "GET";
+        this.publishApiForm.formData.params = [{ key: '', necessary: '必填' }];
       },
       testApi: function() {
         this.$store.commit('changeTestState');
       },
-      updateApi: function() {  // 通知Vuex把api信息发到后台存到数据库中
-        var that = this;
+      publishApi: function() {  // 通知Vuex把api信息发到后台存到数据库中
+        // 加上author字段（作者姓名）
+        var userName = this.$store.getters.getUserName;
+        this.formData.author = userName;
         this.formData.showProperties = this.$store.getters.getShowProperties;
-        this.$store.dispatch('updateApi', this.formData);
+        this.$store.dispatch('publishApi', this.formData);
         this.$message({
-          message: '更新api成功',
-          type: 'success'
+          message: "发布成功",
+          type: "success"
         });
-        router.replace("/useapi/" + that.passApi._id);
-      },
-      deleteApi: function() {
-        var that = this;
-        this.$confirm('此操作将永久删除该API, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$store.dispatch('deleteApi', { apiId: this.passApi._id });
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-          router.replace("/user/" + that.passApi.author);
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
-        });        
+        this.resetForm('publishApiForm');
       }
     }
   }

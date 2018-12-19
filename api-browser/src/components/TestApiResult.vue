@@ -1,8 +1,9 @@
 <template>
-  <div v-if="isTest">
+  <div v-if="isTest" class="white-box-full">
     <h1 v-if="!isFullPage">测试API</h1>
     <p v-if="!api.url">（测试前需先提交最新的API信息）</p>
-    
+    <div>{{api}}</div>
+
     <el-form
       v-if="api.url && !isFullPage"
       :model="testApiForm" 
@@ -41,7 +42,7 @@
         <tree-view :data="dataFromApi" :options="{maxDepth: 10}"></tree-view>
       </div> -->
       <div v-loading="testLoading">
-        <app-visiable-table :jsonData="dataFromApi"></app-visiable-table>
+        <app-visiable-table :jsonData="dataFromApi" :callType="callType"></app-visiable-table>
       </div> 
 
     </div>
@@ -55,7 +56,8 @@
   export default {
     data: function() {
       return {
-        testApiForm: null
+        testApiForm: null,
+        callType: 'testApi'
       }
     },
     computed: {
@@ -71,8 +73,8 @@
         for (var key in getApi.params) {
           var newItem = {
             key: key,
-            value: '',
-            necessary: getApi.params[key]?'必填':'选填'
+            value: getApi.params[key].default,
+            necessary: getApi.params[key].necessary === 'true'?'必填':'选填'
           };
           trans_params.push(newItem);
         }
