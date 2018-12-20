@@ -7,7 +7,7 @@
       <el-step title="视图配置"></el-step>
     </el-steps>
     
-    <div style="margin-top: 20px">
+    <div style="margin-top: 20px;">
       <transition name="flip" mode="out-in">
         <keep-alive>
           <component :is="view"></component>

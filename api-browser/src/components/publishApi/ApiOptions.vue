@@ -17,7 +17,6 @@
       </el-form-item>
 
       <el-form-item
-        :inline="true" 
         :label="'参数 ' + index"
         v-for="(param, index) in form.params"
         :key="index">
@@ -33,7 +32,6 @@
       </el-form-item>
       <el-form-item
         label="参数"
-        :inline="true"
         v-if="form.params.length == 0">
         <el-button type="success" icon="el-icon-plus" round @click="addParam">添加参数</el-button>
       </el-form-item>
@@ -51,10 +49,10 @@
           <h3>返回结果：</h3>
           <tree-view :data="testData" :options="{maxDepth: 10}"></tree-view>
 
-          <h3>输入JS表达式，返回JSON数据中相应字段值：</h3>
+          <!-- <h3>输入JS表达式，返回JSON数据中相应字段值：</h3>
           <el-input style="width: 40%" placeholder="表达式（root不用写）" v-model="expression" type="text"></el-input>
           <el-button type="primary" @click="parseExpMethod">获取表达式的值</el-button>
-          <div>{{ parseExpression }}</div>
+          <div>{{ parseExpression }}</div> -->
         </div>
       </div>
     </div>
@@ -81,6 +79,7 @@ export default {
     return {
       form: {
         url: "https://conference.infoaas.com/conference/conference/advanced/fuzzysearch.do",
+        // url: "https://www.easy-mock.com/mock/5b7be7d835746647206ea91a/jsonTestData/jsonTestData",
         method: "GET",
         // header: '',
         // params: [{ key: "", necessary: "必填", default: "" }]
@@ -89,6 +88,7 @@ export default {
           { key: "offset", necessary: "必填", default: "1" },
           { key: "number", necessary: "必填", default: "6" }
         ]
+        // params: []
       },
       method_options: [
         { value: "GET", label: "GET" },

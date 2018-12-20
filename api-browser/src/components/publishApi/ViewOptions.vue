@@ -1,42 +1,26 @@
 <template>
-  <div>
-    <div>视图配置</div>
-
-    <!-- 返回数据 -->
-    <div class="testResult">
-      <h3>返回结果：</h3>
-      <tree-view :data="jsonData" :options="{maxDepth: 10}"></tree-view>
-      <!-- <h3>输入JS表达式，返回JSON数据中相应字段值：</h3>
-      <el-input style="width: 40%" placeholder="表达式（root不用写）" v-model="expression" type="text"></el-input>
-      <el-button type="primary" @click="parseExpMethod(expression)">获取表达式的值</el-button>
-      <div>{{ parseExpression }}</div> -->
+  <div class="container">
+    <div class="header">
+      <div class="col col-1">键名</div>
+      <div class="col col-2">注释</div>
+      <div class="col col-3">是否显示对应键值对</div>
     </div>
-
-    <!-- 视图配置主要内容 -->
-    <div class="view-option">
-      <!-- 头部：页面基本信息、选择视图类型 -->
-      <div class="header-menu">
-        <div class="left">
-          <div class="page-name">首页</div>         
-        </div>
-        <div class="right">
-          <el-select size="small" style="width: 80px;"  v-model="viewCategory" placeholder="请选择">
-            <el-option
-              v-for="item in viewCategories"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          <el-button type="warning" plain size="small" @click="dialogTableVisible = true">预览</el-button>
-        </div>
-      </div>
-
-      <!-- 页面内容配置 -->
-      <div class="option-content">
-        <app-page-editor :jsonData="jsonData" :viewCategory="viewCategory" :pageObj="pageObj"></app-page-editor>
-      </div>
-
+    <div class="all-properties">
+      <el-form :model="jsonDataOptions" label-position="left" label-width="120px">
+        <el-form-item
+          :label="item"
+          v-for="(value, item, index) in jsonDataOptions"
+          :key="index"
+        >
+          <el-input
+            style="width: 40%; margin-right: 10%"
+            :placeholder="'键名的中文注释（选填，默认为：' + item + '）'"
+            v-model="value.cnName"
+          ></el-input>
+          <el-radio style="width: 10%" v-model="value.isShow" label="true">显示</el-radio>
+          <el-radio style="width: 10%" v-model="value.isShow" label="false">不显示</el-radio>
+        </el-form-item>
+      </el-form>
     </div>
 
     <!-- 底部按钮 -->
@@ -44,106 +28,115 @@
       <el-button @click="previous" type="default">上一步</el-button>
       <el-button @click="publish" type="primary">发布API</el-button>
     </div>
-
-    <!-- 预览弹框 -->
-    <el-dialog title="预览页面" :visible.sync="dialogTableVisible">
-      <!-- 这里是一个显示页面的组件，PageShow.vue -->
-      <app-page-viewer :jsonData="jsonData" v-if='dialogTableVisible'></app-page-viewer>
-    </el-dialog>    
-
   </div>
 </template>
 
 <script>
-  import PageEditor from './viewOptionsComponents/PageEditor.vue';
-  import PageViewer from './viewOptionsComponents/PageViewer.vue';
+import Vue from 'vue';
 
-  export default {
-    data: function() {
-      return {
-        expression: '', 
-        parseExpression: '',
-        // showCardEditor: false,
-        viewCategory: 'card',  // 页面的类型：卡片(card)、表格(table)
-        viewCategories: [{
-          label: '卡片',
-          value: 'card'
-        }, {
-          label: '表格',
-          value: 'table'
-        }],
-        pageObj: {  // 页面对象（最终提交到数据库的对象）：存放每个页面的信息
-          layer: 1,
-          view: 'card',
-          props: {}
-        },
-        dialogTableVisible: false,  // 预览模态框控制开关
-        currentLayer: 1, // 当前显示的页面
+export default {
+  data: function() {
+    return {
+      allProperties: [], // json对象中所有键名的集合
+      allPropertiesTrans: [], // json对象中所有键名的集合, allPropertiesTrans为真正要传到vuex的数组
+      jsonDataOptions: {} // json数据的设置对象，用来设置json数据的键名的中文名和是否显示该键值对
+    };
+  },
+  computed: {
+    // jsonData: function() {
+    //   var jsonData_temp = this.$store.getters.getDataFromApi;
+    //   return jsonData_temp;
+    // }
+  },
+  watch: {},
+  created: function() {
+    var jsonData = this.$store.getters.getDataFromApi;
+    this.getAllProperties(jsonData); // 递归获取数据的所有字段
+    console.log("这个对象的属性有：", this.allProperties);
+    this.$store.commit("setAllProperties", this.allPropertiesTrans);
+
+    // 初始化视图配置对象: jsonDataOptions
+    for (let item of this.allProperties) {
+      let newOptionItem = {
+        originKey: item,  // 原来的键名
+        cnName: item, // 默认为英文键名
+        isShow: "true" // 默认全部键值对都显示
       };
-    },
-    computed: {
-      jsonData: function() {
-        return this.$store.getters.getDataFromApi;
-      }
-    },
-    watch: {
-      viewCategory: function(val) {
-        this.pageObj.view = val;
-      }
-    },
-    methods: {
-      previous: function() {
-        // 回到上一步
-        this.$store.commit('subActive');
-      },
-
-      publish: function() {
-        // 保存数据到vuex（publishApi.js）
-        // this.$store.commit('saveViewOptions', this.form);
-        alert('发布！');
-      }
-    },
-
-    components: {
-      AppPageEditor: PageEditor,
-      AppPageViewer: PageViewer
+      // this.jsonDataOptions[item] = newOptionItem;
+      Vue.set(this.jsonDataOptions, item, newOptionItem);  // 给对象this.jsonDataOptions新增item属性，并把newOptionItem赋值给这个新属性
     }
-  };
+    console.log("jsonDataOptions", this.jsonDataOptions);
+  },
+  methods: {
+    previous: function() {
+      // 回到上一步
+      this.$store.commit("subActive");
+    },
+
+    publish: function() {
+      // 保存数据到vuex（publishApi.js）
+      // this.$store.commit('saveViewOptions', this.form);
+      console.log("生成配置对象：", this.jsonDataOptions);
+      alert("发布！");
+    },
+
+    /*
+     * 获取json对象中的全部键名
+     */
+    getAllProperties: function(data) {
+      var type = "";
+      var obj;
+      if (Array.isArray(data)) {
+        type = "array";
+        obj = [];
+      } else if (typeof data === "object") {
+        type = "object";
+        obj = {};
+      } else {
+        // 递归边界
+        return;
+      }
+
+      if (type === "array") {
+        for (var i = 0; i < data.length; i++) {
+          this.getAllProperties(data[i]);
+        }
+      } else if (type === "object") {
+        for (var key in data) {
+          if (this.allProperties.indexOf(key) === -1) {
+            this.allProperties.push(key);
+            var newProp = {
+              key: key,
+              label: key,
+              disabled: false
+            };
+            this.allPropertiesTrans.push(newProp); // this.allPropertiesTrans为真正要传到vuex的数组
+            this.getAllProperties(data[key]);
+          }
+        }
+      } else {
+        return;
+      }
+    }
+  }
+};
 </script>
 
 <style scoped>
-.testResult {
-  margin-top: 20px;
-  padding: 20px;
-  border: 1px solid #dcdfe6;
-  border-radius: 5px;
-  background-color: #e4e7ed;
+.header {
+  padding-bottom: 20px;
 }
 
-.view-option {
-  border-radius: 5px;
-  border: 1px solid #e6e6e6;
-  background: #fff;
-  width: 100%;
-  min-height: 200px;
-  margin-top: 15px;
-  /* padding: 15px; */
+.header .col {
+  display: inline-block;
+  color: #409eff;
 }
 
-.option-content {
-  margin: 15px;
+.header .col-1 {
+  width: 120px;
 }
 
-.header-menu {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #e6e6e6;
-  padding: 15px;
-}
-
-.header-menu .page-name {
-  margin-right: 20px;
-  display: inline;
+.header .col-2 {
+  width: 44%;
 }
 </style>
