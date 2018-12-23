@@ -11,29 +11,40 @@
             v-for="item in method_options"
             :key="item.value"
             :label="item.label"
-            :value="item.value">
-          </el-option>
+            :value="item.value"
+          ></el-option>
         </el-select>
       </el-form-item>
 
-      <el-form-item
-        :label="'参数 ' + index"
-        v-for="(param, index) in form.params"
-        :key="index">
-          <el-input style="width: 40%" placeholder="key" v-model="param.key" >
-            <el-select style="width: 80px" v-model="param.necessary" slot="append" placeholder="必填">
-              <el-option label="必填" value="必填"></el-option>
-              <el-option label="选填" value="选填"></el-option>
-            </el-select>
-          </el-input>
-          <el-input style="width: 40%" placeholder="默认值" v-model="param.default" type="text"></el-input>
-          <el-button type="danger" icon="el-icon-close" circle @click="removeParam(param)"></el-button>
-          <el-button type="success" icon="el-icon-plus" circle v-if="index == form.params.length-1" @click="addParam"></el-button>
+      <el-form-item :label="'参数 ' + index" v-for="(param, index) in form.params" :key="index">
+        <el-input style="width: 40%" placeholder="key" v-model="param.key">
+          <el-select style="width: 80px" v-model="param.necessary" slot="append" placeholder="必填">
+            <el-option label="必填" value="必填"></el-option>
+            <el-option label="选填" value="选填"></el-option>
+          </el-select>
+        </el-input>
+        <el-input style="width: 40%" placeholder="默认值" v-model="param.default" type="text"></el-input>
+        <el-button type="danger" icon="el-icon-close" circle @click="removeParam(param)"></el-button>
+        <el-button
+          type="success"
+          icon="el-icon-plus"
+          circle
+          v-if="index == form.params.length-1"
+          @click="addParam"
+        ></el-button>
       </el-form-item>
-      <el-form-item
-        label="参数"
-        v-if="form.params.length == 0">
+      <el-form-item label="参数" v-if="form.params.length == 0">
         <el-button type="success" icon="el-icon-plus" round @click="addParam">添加参数</el-button>
+      </el-form-item>
+
+      <!-- 简介说明 -->
+      <el-form-item label="接口说明">
+        <el-input
+          type="textarea"
+          :autosize="{ minRows: 4}"
+          v-model="form.summary"
+          placeholder="接口说明（选填）"
+        ></el-input>
       </el-form-item>
     </el-form>
 
@@ -44,7 +55,6 @@
     <div class="testResult">
       <div v-loading="testLoading">
         <!-- <el-button v-if="testData !== null" type="success" plain size="small" @click="showModel = true">查看返回的数据</el-button> -->
-        
         <div>
           <h3>返回结果：</h3>
           <tree-view :data="testData" :options="{maxDepth: 10}"></tree-view>
@@ -52,7 +62,7 @@
           <!-- <h3>输入JS表达式，返回JSON数据中相应字段值：</h3>
           <el-input style="width: 40%" placeholder="表达式（root不用写）" v-model="expression" type="text"></el-input>
           <el-button type="primary" @click="parseExpMethod">获取表达式的值</el-button>
-          <div>{{ parseExpression }}</div> -->
+          <div>{{ parseExpression }}</div>-->
         </div>
       </div>
     </div>
@@ -74,21 +84,24 @@
 </template>
 
 <script>
+import Vue from "vue";
 export default {
   data: function() {
     return {
       form: {
-        url: "https://conference.infoaas.com/conference/conference/advanced/fuzzysearch.do",
-        // url: "https://www.easy-mock.com/mock/5b7be7d835746647206ea91a/jsonTestData/jsonTestData",
+        // url: "https://conference.infoaas.com/conference/conference/advanced/fuzzysearch.do",
+        url:
+          "https://www.easy-mock.com/mock/5b7be7d835746647206ea91a/jsonTestData/jsonTestData",
         method: "GET",
         // header: '',
-        // params: [{ key: "", necessary: "必填", default: "" }]
-        params: [
-          { key: "keyword", necessary: "必填", default: "ccf" },
-          { key: "offset", necessary: "必填", default: "1" },
-          { key: "number", necessary: "必填", default: "6" }
-        ]
-        // params: []
+        // params: [{ key: "", necessary: "必填", default: "" }],
+        // params: [
+        //   { key: "keyword", necessary: "必填", default: "ccf" },
+        //   { key: "offset", necessary: "必填", default: "1" },
+        //   { key: "number", necessary: "必填", default: "6" }
+        // ],
+        params: [],
+        summary: ""
       },
       method_options: [
         { value: "GET", label: "GET" },
@@ -97,9 +110,17 @@ export default {
         { value: "DELETE", label: "DELETE" }
       ],
       showModel: false,
-      expression: '',
-      parseExpression: ''
+      expression: "",
+      parseExpression: ""
     };
+  },
+  created: function() {
+    // 初始化，从Vuex中获取api的url、method、summary、params
+    let getApiOptions = this.$store.getters.getApiOptions;
+    this.form.url = getApiOptions.url;
+    this.form.method = getApiOptions.method;
+    this.form.summary = getApiOptions.summary;
+    Vue.set(this.form, "params", getApiOptions.params);
   },
   computed: {
     testData: function() {
@@ -107,21 +128,20 @@ export default {
     },
 
     testLoading: function() {
-        return this.$store.getters.getTestLoading;
-    },
-
+      return this.$store.getters.getTestLoading;
+    }
   },
   watch: {
-    testData: function(val) {
-
-    }
+    testData: function(val) {}
   },
   methods: {
     parseExpMethod: function() {
       var that = this;
       var Fn = Function;
       var data = that.testData;
-      this.parseExpression = new Fn('data','return data.' + that.expression)(data);
+      this.parseExpression = new Fn("data", "return data." + that.expression)(
+        data
+      );
     },
 
     removeParam: function(param) {
@@ -140,15 +160,25 @@ export default {
     },
 
     previous: function() {
+      // 保存数据到vuex（publishApi.js）
+      this.$store.commit("saveApiOptions", this.form);
       // 回到上一步
       this.$store.commit("subActive");
     },
 
     next: function() {
-      // 保存数据到vuex（publishApi.js）
-      this.$store.commit("saveApiOptions", this.form);
-      // 跳到下一步
-      this.$store.commit("addActive");
+      if (this.testData == null) {
+        this.$message.error("请测试接口，并且测试成功后才进行下一步操作");
+        return;
+      } else if (!this.form.url) {
+        this.$message.error("请输入url");
+        return;
+      } else {
+        // 保存数据到vuex（publishApi.js）
+        this.$store.commit("saveApiOptions", this.form);
+        // 跳到下一步
+        this.$store.commit("addActive");
+      }
     },
 
     testApi: function() {
@@ -160,7 +190,7 @@ export default {
         // 10秒后，取消加载动画
         that.$store.commit("setTestLoadingFalse");
       }, 1000 * 10);
-    } 
+    }
   }
 };
 </script>

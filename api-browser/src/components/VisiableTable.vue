@@ -31,11 +31,11 @@
     <!-- <br> -->
     <!-- 面包屑 -->
     <el-breadcrumb separator-class="el-icon-arrow-right" v-if="currentNode">
-      <!-- 如果检测到配置对象中（jsonDataOptions）对应的有设置键的中文名的时候，就用中文名来显示 -->
+      <!-- 如果检测到配置对象中（viewOptions）对应的有设置键的中文名的时候，就用中文名来显示 -->
       <el-breadcrumb-item
         v-for="(item, index) in nameStackForBread"
         :key="index"
-      >{{ jsonDataOptions[item] != null && jsonDataOptions[item].cnName ? jsonDataOptions[item].cnName : item }}</el-breadcrumb-item>
+      >{{ viewOptions[item] != null && viewOptions[item].cnName ? viewOptions[item].cnName : item }}</el-breadcrumb-item>
     </el-breadcrumb>
 
     <br>
@@ -45,18 +45,18 @@
       <table>
         <thead>
           <tr>
-            <!-- 如果检测到配置对象中（jsonDataOptions）对应的有设置键的中文名的时候，就用中文名来显示 -->
+            <!-- 如果检测到配置对象中（viewOptions）对应的有设置键的中文名的时候，就用中文名来显示 -->
             <th
               :colspan="columns.length"
-            >{{ jsonDataOptions[currentNodeKey] != null && jsonDataOptions[currentNodeKey].cnName ? jsonDataOptions[currentNodeKey].cnName : currentNodeKey }}</th>
+            >{{ viewOptions[currentNodeKey] != null && viewOptions[currentNodeKey].cnName ? viewOptions[currentNodeKey].cnName : currentNodeKey }}</th>
           </tr>
           <tr>
             <!-- <th v-if="columns && columns != []">操作</th> -->
             <th
               v-for="(column, index) in columns"
               :key="index"
-              v-if="jsonDataOptions[column] == null || jsonDataOptions[column].isShow != false"
-            >{{ jsonDataOptions[column] != null && jsonDataOptions[column].cnName != undefined ? jsonDataOptions[column].cnName : column }}</th>
+              v-if="viewOptions[column] == null || viewOptions[column].isShow != 'false'"
+            >{{ viewOptions[column] != null && viewOptions[column].cnName != undefined ? viewOptions[column].cnName : column }}</th>
           </tr>
         </thead>
         <tbody>
@@ -67,7 +67,7 @@
             <td
               v-for="(column, index2) in columns"
               :key="index2"
-              v-if="jsonDataOptions[column] == null || jsonDataOptions[column].isShow != false"
+              v-if="viewOptions[column] == null || viewOptions[column].isShow != 'false'"
             >
               <!-- 用row[column]来获取单元格内容 -->
               <div
@@ -87,20 +87,20 @@
     <!-- 当表格只有一行时（currentNode.length ===1）用卡片列表的形式显示 -->
     <el-card class="box-card" v-if="currentNode && currentNode.length === 1">
       <div slot="header" class="clearfix">
-        <!-- 如果检测到配置对象中（jsonDataOptions）对应的有设置键的中文名的时候，就用中文名来显示 -->
-        <span>{{ jsonDataOptions[currentNodeKey] != null && jsonDataOptions[currentNodeKey].cnName ? jsonDataOptions[currentNodeKey].cnName : currentNodeKey }}</span>
+        <!-- 如果检测到配置对象中（viewOptions）对应的有设置键的中文名的时候，就用中文名来显示 -->
+        <span>{{ viewOptions[currentNodeKey] != null && viewOptions[currentNodeKey].cnName ? viewOptions[currentNodeKey].cnName : currentNodeKey }}</span>
         <!-- <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button> -->
       </div>
       <div
         class="card-style card-row"
         v-for="(column,index) in columns"
         :key="'card' + index"
-        v-if="jsonDataOptions[column] == null || jsonDataOptions[column].isShow != false"
+        v-if="viewOptions[column] == null || viewOptions[column].isShow != 'false'"
       >
         <span
           class="card-key"
-          v-if="jsonDataOptions[column] != null && jsonDataOptions[column].cnName != undefined"
-        >{{ jsonDataOptions[column].cnName }}:</span>
+          v-if="viewOptions[column] != null && viewOptions[column].cnName != undefined"
+        >{{ viewOptions[column].cnName }}:</span>
         <span class="card-key" v-else>{{ column }}:</span>
         <span
           v-if="typeof currentNode[0][column] == 'object' && currentNode[0][column] != null || Array.isArray(currentNode[0][column])"
@@ -160,8 +160,20 @@
 // import ShowPropertiesOption from "./ShowPropertiesOption.vue";
 
 export default {
-  props: ["jsonData", "callType"],
+  props: ["jsonData", "callType", "viewOptions"],
+  // viewOptions: {
+    // json数据的设置对象，用来设置json数据的键名的中文名和是否显示该键值对
+    /*
+      格式：
+      keyName: {
+        originKey: '原来键名'
+        cnName: '中文名',
+        isShow: 'true' | 'false' 这个键值对是否显示
+      }
+    */
+  //},
   data: function() {
+    console.log('传过来的viewOptions', this.viewOptions);
     return {
       currentNode: null, // 当前键值对的值
       currentNodeKey: "Root", // 当前键值对的键
@@ -169,27 +181,6 @@ export default {
       stack: [], // 节点内容栈
       nameStack: [], // 节点键名栈（作为卡片的头部）
       nameStackForBread: ["Root"], // 节点键名栈 （作为面包屑）
-      jsonDataOptions: {
-        // json数据的设置对象，用来设置json数据的键名的中文名和是否显示该键值对
-        arrayTest: {
-          cnName: "数组1",
-          isShow: true
-        },
-        arrayTest2: {
-          cnName: "数组2",
-          isShow: true
-        },
-        arrayTest3: {
-          cnName: "数组3"
-        }
-        /*
-          格式：
-          keyName: {
-            cnName: '中文名',
-            isShow: true | false 这个键值对是否显示
-          }
-        */
-      },
       // dialogFormVisible: false,
       // dialogFormVisible2: false,
       // form: {

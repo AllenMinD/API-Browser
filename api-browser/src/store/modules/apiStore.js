@@ -16,8 +16,7 @@ var state = {
     summary: null,
     tags: null,
     stars: null,
-    allProperties: [],
-    showProperties: []
+    // allProperties: []
   },
   dataFromApi: null,
   testLoading: false,
@@ -65,12 +64,9 @@ var getters = {
   getTagApisList: function(state) {
     return state.tagApisList;
   },
-  getAllProperties: function(state) {
-    return state.api.allProperties;
-  },
-  getShowProperties: function(state) {
-    return state.api.showProperties;
-  }
+  // getAllProperties: function(state) {
+  //   return state.api.allProperties;
+  // }
 };
 
 var mutations = {
@@ -82,8 +78,7 @@ var mutations = {
     state.api.summary = data.summary;
     state.api.tags = data.tags;
     state.api.stars = data.stars;
-    state.api.allProperties = data.allProperties;
-    state.api.showProperties = data.showProperties;
+    // state.api.allProperties = data.allProperties;
   },
   changeTestState: function(state) {
     state.isTesting = !state.isTesting;
@@ -115,12 +110,9 @@ var mutations = {
   setTagApisList: function(state, apiList) {
     state.tagApisList = apiList;
   },
-  setAllProperties: function(state, allProperties) {
-    state.api.allProperties = allProperties;
-  },
-  setShowProperties: function(state, showProperties) {
-    state.api.showProperties = showProperties;
-  }
+  // setAllProperties: function(state, allProperties) {
+  //   state.api.allProperties = allProperties;
+  // }
 };
 
 var actions = {
@@ -149,24 +141,7 @@ var actions = {
       }).catch(function(error) {console.log(error);}
     );
   },
-  publishApi: function(context, apiInfo) {
-    console.log('前端发来想要发布的信息：\n', apiInfo);
-    axios.post(
-      '/api/publishApi',
-      qs.stringify(apiInfo),
-      { 
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': localStorage.getItem('token')
-        }
-      }).then(function(res) {
-        console.log('保存（发布）Api的结果：', res);
-        if (!res.data.success) {
-          alert(res.data.message);
-        }
-      }).catch(function(error) {console.log(error);}
-    );
-  },
+  
   updateApi: function(context, apiInfo) {
     axios.post(
       '/api/updateApi',

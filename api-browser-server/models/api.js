@@ -10,30 +10,30 @@ var ApiSchema = new Schema({
     type: String,
     required: true  // 不可为空约束
   },
-  title: {
+  title: {  // api标题
     type: String,
     required: true
   },
-  params: {
+  params: {  // api参数
     type: Object
   },
-  method: {
+  method: {  // 请求方法
     type: String
   },
-  summary: {
+  summary: {  // 简要说明
     type: String
   },
-  tags: {
+  tags: {  // api的标签
     type: Array
   },
-  stars: {
+  stars: {  // 收藏数
     type: Number
   },
-  author: {
+  author: {  // api的发布者
     type: String
   },
-  showProperties: {
-    type: Array
+  viewOptions: {  // 视图配置对象，主要用来表示json数据中键值对是否显示，以及键名的注释
+    type: Object
   }
 });
 

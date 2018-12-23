@@ -94,10 +94,10 @@ router.post(
         tags: data.tags,
         stars: 0,
         author: data.author,
-        showProperties: data.showProperties
+        viewOptions: data.viewOptions
       });
       // 把api信息存入数据库的apis集合中
-      newApi.save(function(err) {
+      newApi.save(function(err, saveRes) {
         if (err) {
           console.log(err.message);
           if (err.message.indexOf('E11000 duplicate key error collection') != -1) {
@@ -108,7 +108,7 @@ router.post(
           }
           return res.json({ success: false, message: '发布失败' });
         }
-        res.json({ success: true, message: '发布成功' });
+        res.json({ success: true, message: '发布成功', saveRes: saveRes});
       });
     }
   }
@@ -161,7 +161,7 @@ router.get('/getApiById', function(req, res) {
       throw err;
       res.json({ success: false, message: '根据id查找API失败' });
     } else {
-      // console.log(apis);
+      console.log('根据apiId查询api: \n', api);
       res.json({ success: true, message: '根据id查找API', data: api });
     }
   });
@@ -194,7 +194,7 @@ router.post(
         params: data.params,
         summary: data.summary,
         tags: data.tags,
-        showProperties: data.showProperties
+        viewOptions: data.viewOptions
       },
       { new: true },
       function(err, newApi) {

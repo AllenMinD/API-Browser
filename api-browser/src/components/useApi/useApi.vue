@@ -76,7 +76,7 @@
       </div> -->
 
       <div v-loading="testLoading">
-        <app-visiable-table :jsonData="dataFromApi" :callType="callType"></app-visiable-table>
+        <app-visiable-table :jsonData="dataFromApi" :callType="callType" :viewOptions="api.viewOptions"></app-visiable-table>
       </div> 
       
       <!-- <div v-html="ppTable"></div> -->
@@ -145,18 +145,19 @@
       axios.get(
         reqUrl + '/api/getApiById?apiId=' + that.apiId
       ).then(function(res) {
-        console.log('根据id查询api的结果：', res);
+        // console.log('根据id查询api的结果: ', res.data.data);
         that.api = res.data.data;
-        that.$store.dispatch('storeApiToVuex', that.api);
+        console.log('根据id查询api的结果: ', that.api);
+        that.$store.dispatch('storeApiToVuex', res.data.data);
         // 转化params为数组，并且变为这样的形式 
         // [{key1: '', value1: '', necessary: true } , {key2: '', value2: '', necessary: true }]
-        if (that.api.params) {
+        if (Array.isArray(that.api.params) && that.api.params.length > 0) {
           var trans_params = [];
-          for (var key in that.api.params) {
+          for (let item of that.api.params) {
             var newItem = {
-              key: key,
-              value: that.api.params[key].default,
-              necessary: that.api.params[key].necessary === 'true'?'必填':'选填'
+              key: item.key,
+              value: item.default,
+              necessary: item.necessary
             };
             trans_params.push(newItem);
           }
@@ -164,7 +165,7 @@
         }
         // 当用户进入这个页面时，就开始自动发送请求
         that.testApi();  
-      }).catch(function(error) {console.log(error)});
+      }).catch(function(err) {console.log(err)});
 
       // 发请求获取用户的myStars
       axios.get(
