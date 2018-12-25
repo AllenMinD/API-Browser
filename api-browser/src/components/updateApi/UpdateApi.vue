@@ -5,16 +5,16 @@
       <app-update-form v-if="api && !isFullPage" :passApi="api"></app-update-form>
     </div>
 
-    <transition name="slide" mode="out-in" type="animation">
+    <!-- <transition name="slide" mode="out-in" type="animation">
       <app-test-api-result></app-test-api-result>
-    </transition>
+    </transition> -->
   </div>
 </template>
 
 <script>
   import axios from 'axios';
   import UpdateForm from './UpdateForm.vue';
-  import TestApiResult from '../TestApiResult.vue';
+  // import TestApiResult from '../TestApiResult.vue';
 
   export default {
     props: ['apiId'],
@@ -34,31 +34,53 @@
       ).then(function(res) {
         console.log('根据id查询api的结果：', res);
         that.api = res.data.data;
-        // 转化params为数组，并且变为这样的形式 
-        // [{key1: '', value1: '', necessary: true } , {key2: '', value2: '', necessary: true }]
-        var trans_params = [];
-        for (var key in that.api.params) {
-          var newItem = {
-            key: key,
-            default: that.api.params[key].default,
-            necessary: that.api.params[key].necessary === 'true'?'必填':'选填'
-          };
-          trans_params.push(newItem);
+        // 转化params为数组，主要是把default字段变成value
+        /*
+        [{
+          key: item.key,
+          value: item.default,
+          necessary: item.necessary
+        }]
+        */
+        if (Array.isArray(that.api.params) && that.api.params.length > 0) {
+          var trans_params = [];
+          for (let item of that.api.params) {
+            var newItem = {
+              key: item.key,
+              value: item.default,
+              necessary: item.necessary
+            };
+            trans_params.push(newItem);
+          }
+          that.api.params = trans_params;
         }
-        that.api.params = trans_params;
-        // 转化tags从数组为对象数组
-        // [{tagName: 'xxx'}, {tagName: 'xxx'}, ...]
-        var trans_tags = [];
-        for (var i=0,len=that.api.tags.length;i<len;i++) {
-          var newObj = {
-            tagName: that.api.tags[i]
-          };
-          trans_tags.push(newObj);
-        }
-        if (trans_tags.length === 0) {
-          trans_tags.push({tagName: ""});
-        }
-        that.api.tags = trans_tags;
+
+        // // 转化params为数组，并且变为这样的形式 
+        // // [{key1: '', value1: '', necessary: true } , {key2: '', value2: '', necessary: true }]
+        // var trans_params = [];
+        // for (var key in that.api.params) {
+        //   var newItem = {
+        //     key: key,
+        //     default: that.api.params[key].default,
+        //     necessary: that.api.params[key].necessary === 'true'?'必填':'选填'
+        //   };
+        //   trans_params.push(newItem);
+        // }
+        // that.api.params = trans_params;
+
+        // // 转化tags从数组为对象数组
+        // // [{tagName: 'xxx'}, {tagName: 'xxx'}, ...]
+        // var trans_tags = [];
+        // for (var i=0,len=that.api.tags.length;i<len;i++) {
+        //   var newObj = {
+        //     tagName: that.api.tags[i]
+        //   };
+        //   trans_tags.push(newObj);
+        // }
+        // if (trans_tags.length === 0) {
+        //   trans_tags.push({tagName: ""});
+        // }
+        // that.api.tags = trans_tags;
         that.$store.dispatch('storeApiToVuex', that.api);
       }).catch(function(error) {console.log(error)});      
     },
@@ -69,7 +91,7 @@
     },
     components: {
       appUpdateForm: UpdateForm,
-      appTestApiResult: TestApiResult
+      // appTestApiResult: TestApiResult
     }
   }
 </script>

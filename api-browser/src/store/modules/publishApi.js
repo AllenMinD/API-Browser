@@ -14,7 +14,7 @@ var state = {
     url: '',
     method: 'GET',
     params: [],
-    viewOptions: {}
+    viewOptions: null
   }
 };
 
@@ -55,7 +55,7 @@ var mutations = {
       url: '',
       method: 'GET',
       params: [],
-      viewOptions: {}
+      viewOptions: null
     }
   },
   addActive: function(state) {

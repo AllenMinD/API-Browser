@@ -75,7 +75,7 @@
               >
                 <el-button type="primary" plain size="small" @click="expand(row[column], column)">展开</el-button>
               </div>
-              <div v-else @dblclick="edit(row, column)">{{ row[column]?row[column]:'null' }}</div>
+              <div v-else>{{ row[column]?row[column]:'null' }}</div>
             </td>
           </tr>
         </tbody>
@@ -115,7 +115,6 @@
         <span
           class="card-value"
           v-else
-          @dblclick="edit(currentNode[0], column)"
         >{{ currentNode[0][column]?currentNode[0][column]:'null' }}</span>
       </div>
     </el-card>

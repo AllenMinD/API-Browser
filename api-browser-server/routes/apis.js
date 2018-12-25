@@ -423,6 +423,65 @@ router.options('/getApiByTag', function(req, res) {
   res.send();
 });
 
+// 获取热门标签
+router.get('/getTopTags', function(req, res) {
+  res.header({"Access-Control-Allow-Origin": "*"});
+  Api.find({}, 'tags', function(err, findRes) {
+    if (err) {
+      console.log(err);
+      res.json({ success: false, message: '查询失败' });
+    } else {
+      console.log('查询所有标签', findRes);
+      let tags = findRes.map(function(item) {
+        return item.tags;
+      });
+
+      /*
+        1. 把findRes数组扁平化
+        2. 统计各个标签出现的频率
+        3. 根据出现的频率按大到小排序
+        4. 数组去重
+      */
+      tags = [].concat(...tags);  // 数组扁平化
+      // console.log('返回全部标签：', tags);
+      // 数组按照出现的频率从高到低排序
+      let tagsSortByCount = (function (tags) {
+        let arrUni = [];
+        let arrCnt = [];
+        tags.forEach((val)=>{
+            let idx = arrUni.indexOf(val);
+            if (idx<0) {
+                arrUni.push(val);
+                arrCnt.push(1);
+            }else{
+                arrCnt[idx]++;
+            }
+        });
+        let arrTmp = arrUni.slice();
+        arrUni.sort((a, b)=>{
+            let idxa = arrTmp.indexOf(a);
+            let idxb = arrTmp.indexOf(b);
+            return arrCnt[idxb] - arrCnt[idxa];
+        });
+        return arrUni;
+      })(tags);
+
+      console.log('获取热门标签返回到前端：', tagsSortByCount.slice(0, 10));
+
+      res.json({ success: true, message: '查询所有标签成功', data: tagsSortByCount.slice(0, 10)});
+    }
+  });
+});
+
+// 响应/getTopTags的预检响应
+router.options('/getTopTags', function(req, res) {
+  console.log('收到OPTIONS请求');
+  res.header({"Access-Control-Allow-Origin": "*"});
+  res.header({"Access-Control-Request-Method": "GET, POST, PUT"});
+  res.header({"Access-Control-Allow-Headers": "*"});
+  res.send();
+});
+
 
 // 搜索API
 router.get('/search', function(req, res) {
@@ -456,54 +515,54 @@ router.options('/search', function(req, res) {
   res.send();
 });
 
-// 把修改后的数据发送会第三方服务器
-router.post(
-  '/sendBackData',
-  passport.authenticate('bearer', { session: false }),
-  function(req, res) {
-    res.header({"Access-Control-Allow-Origin": "*"});
-    console.log('前端发来的api信息\n', qs.parse(req.body));
-    var data = qs.parse(req.body);
-    var params = {};
-    if (data.params) {
-      for (var i=0,len=data.params.length;i<len;i++) {
-        params[data.params[i].key] = data.params[i].value;
-      }
-    }
-    if (data.method === "POST") {
-      request({
-        method: "POST",
-        uri: data.url,
-        multipart: [{ 
-              'content-type': 'application/json',
-              body: JSON.stringify(params)
-            }
-            , { body: 'I am an attachment' }
-          ]
-        },
-        function(err, r, body) {
-          if (err) {
-            console.log("错误信息：", err);
-            res.json({ success: false, message: '请求发送失败' });
-          } else {
-            // console.log('第三方api返回的res:', r);
-            console.log('第三方api返回的data: ', body);
-            res.json({ success: true, message: '发送请求成功', data: body });
-          }
-        }
-      );
-    }
-    // TODO: PUT, DELETE request
-  }
-);
+// // 把修改后的数据发送会第三方服务器
+// router.post(
+//   '/sendBackData',
+//   passport.authenticate('bearer', { session: false }),
+//   function(req, res) {
+//     res.header({"Access-Control-Allow-Origin": "*"});
+//     console.log('前端发来的api信息\n', qs.parse(req.body));
+//     var data = qs.parse(req.body);
+//     var params = {};
+//     if (data.params) {
+//       for (var i=0,len=data.params.length;i<len;i++) {
+//         params[data.params[i].key] = data.params[i].value;
+//       }
+//     }
+//     if (data.method === "POST") {
+//       request({
+//         method: "POST",
+//         uri: data.url,
+//         multipart: [{ 
+//               'content-type': 'application/json',
+//               body: JSON.stringify(params)
+//             }
+//             , { body: 'I am an attachment' }
+//           ]
+//         },
+//         function(err, r, body) {
+//           if (err) {
+//             console.log("错误信息：", err);
+//             res.json({ success: false, message: '请求发送失败' });
+//           } else {
+//             // console.log('第三方api返回的res:', r);
+//             console.log('第三方api返回的data: ', body);
+//             res.json({ success: true, message: '发送请求成功', data: body });
+//           }
+//         }
+//       );
+//     }
+//     // TODO: PUT, DELETE request
+//   }
+// );
 
-// 响应/sendBackData的“预检”请求
-router.options('/sendBackData', function(req, res) {
-  console.log('收到OPTIONS请求');
-  res.header({"Access-Control-Allow-Origin": "*"});
-  res.header({"Access-Control-Request-Method": "GET, POST, PUT"});
-  res.header({"Access-Control-Allow-Headers": "*"});
-  res.send();
-});
+// // 响应/sendBackData的“预检”请求
+// router.options('/sendBackData', function(req, res) {
+//   console.log('收到OPTIONS请求');
+//   res.header({"Access-Control-Allow-Origin": "*"});
+//   res.header({"Access-Control-Request-Method": "GET, POST, PUT"});
+//   res.header({"Access-Control-Allow-Headers": "*"});
+//   res.send();
+// });
 
 module.exports = router;

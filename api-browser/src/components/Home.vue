@@ -58,18 +58,18 @@
         isAll: true,
         allTag: { tagName: "全部", isActive: true },
         tags: [
-          { tagName: "新闻资讯", isActive: false },
-          { tagName: "教育培训", isActive: false },
-          { tagName: "实时监控", isActive: false },
-          { tagName: "电商购物", isActive: false },
-          { tagName: "游戏", isActive: false },
-          { tagName: "工具", isActive: false },
-          { tagName: "书影音", isActive: false },
-          { tagName: "体育", isActive: false },
-          { tagName: "交通", isActive: false },
-          { tagName: "旅游", isActive: false },
-          { tagName: "理财", isActive: false },
-          { tagName: "其他", isActive: false }
+          // { tagName: "新闻资讯", isActive: false },
+          // { tagName: "教育培训", isActive: false },
+          // { tagName: "实时监控", isActive: false },
+          // { tagName: "电商购物", isActive: false },
+          // { tagName: "游戏", isActive: false },
+          // { tagName: "工具", isActive: false },
+          // { tagName: "书影音", isActive: false },
+          // { tagName: "体育", isActive: false },
+          // { tagName: "交通", isActive: false },
+          // { tagName: "旅游", isActive: false },
+          // { tagName: "理财", isActive: false },
+          // { tagName: "其他", isActive: false }
         ],
         lastActive: null,
       };
@@ -111,13 +111,28 @@
         }
       },
       rightMove: function(event) {
-        // console.log(event.target.parentNode.previousSibling.previousSibling.offsetWidth);
+        console.log(event.target.parentNode.previousSibling.previousSibling.offsetWidth); // ul.tag-tabs的宽度
+        // console.log(event.target.parentNode.previousSibling.previousSibling.childNodes);
+        // 统计目前显示的所有标签加起来的宽度
+        let liNodes = event.target.parentNode.previousSibling.previousSibling.childNodes;
+        let liNodes_width = 0;
+        for (let i = 0, len = liNodes.length; i < len; i++) {
+          if (liNodes[i].nodeType === 3) {
+            continue;
+          } else {
+            liNodes_width += liNodes[i].offsetWidth;
+          }
+        }
+        console.log('所有tags的宽度', liNodes_width);
+
         var num = this.marginLeftData.slice(0, this.marginLeftData.indexOf('px'));
         var scrollMargin = (this.tags.length + 1) * 88 - event.target.parentNode.previousSibling.previousSibling.offsetWidth;
-        if ((parseInt(num) - 60) > -scrollMargin) {
-          this.marginLeftData = (parseInt(num) - 60) + 'px';
-        } else {
-          this.marginLeftData = -scrollMargin + 'px';
+        if (liNodes_width > event.target.parentNode.previousSibling.previousSibling.offsetWidth) {  // 当所有标签的宽度加起来大于ul的宽度的时候，才进行滚动
+          if ((parseInt(num) - 60) > -scrollMargin) {
+            this.marginLeftData = (parseInt(num) - 60) + 'px';
+          } else {
+            this.marginLeftData = -scrollMargin + 'px';
+          }
         }
       },
       switchTag: function(tag, event) {
@@ -130,6 +145,7 @@
           tag.isActive = true;
           var reqUrl = this.$store.getters.getReqUrl;
           var that = this;
+          // 根据标签获取Api
           axios.get(reqUrl + '/api/getApiByTag?tag=' + tagKeyword)
               .then(function(res) {
                 // console.log(res.data.data); // 标签为【tag】的api
@@ -151,6 +167,7 @@
     created: function() {
       var that = this;
       var reqUrl = this.$store.getters.getReqUrl;
+      // 获取全部Api
       axios.get(reqUrl + '/api/getAllApis')
         .then(function(res) {
           console.log(res);
@@ -158,6 +175,24 @@
           that.$store.commit('setAllApisList', res.data.data);
         }).catch(function(error) {console.log(error)}
       );
+
+      // 获取热门标签
+      axios.get(reqUrl + '/api/getTopTags').then(function(res) {
+        console.log('获取热门标签结果：', res.data.data);
+        if (Array.isArray(res.data.data)) {
+          let tags_temp = [];
+          for (let item of res.data.data) {
+            let newItem = {
+              tagName: item,
+              isActive: false
+            }
+            tags_temp.push(newItem);
+          }
+          that.tags = tags_temp;
+        }
+      }).catch(function(err) {
+        console.log(err);
+      });
 
       this.lastActive = this.allTag;   
     }

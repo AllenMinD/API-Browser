@@ -6,8 +6,8 @@
       <div class="col col-3">是否显示对应键值对</div>
     </div>
     <div class="all-properties">
-      <el-form :model="viewOptions" label-position="left" label-width="20%">
-        <el-form-item :label="item" v-for="(value, item, index) in viewOptions" :key="index">
+      <el-form :model="viewOptions" label-position="left">
+        <el-form-item :label="item" label-width="20%" v-for="(value, item, index) in viewOptions" :key="index">
           <el-input
             style="width: 50%; margin-right: 10%"
             :placeholder="'键名的中文注释（选填，默认为：' + item + '）'"
@@ -47,9 +47,9 @@ export default {
   watch: {},
   created: function() {
     // 初始化viewOptions（从Vuex中获取）
-    this.viewOptions = this.$store.getters.getViewOptions;
+    var getViewOptions = this.$store.getters.getViewOptions;
 
-    if (this.viewOptions == {} || this.viewOptions == null) {  // 如果vuex中的viewOptions为空，则重新根据返回的json生成
+    if (getViewOptions == null) {  // 如果vuex中的viewOptions为空，则重新根据返回的json生成
       var jsonData = this.$store.getters.getDataFromApi;
       this.getAllProperties(jsonData); // 递归获取数据的所有字段
       console.log("这个对象的属性有：", this.allProperties);
@@ -65,6 +65,8 @@ export default {
         // this.viewOptions[item] = newOptionItem;
         Vue.set(this.viewOptions, item, newOptionItem); // 给对象this.viewOptions新增item属性，并把newOptionItem赋值给这个新属性
       }
+    } else {
+      this.viewOptions = getViewOptions;
     }
     console.log("viewOptions", this.viewOptions);
   },
@@ -148,7 +150,7 @@ export default {
 }
 
 .header .col-2 {
-  width: 50%;
+  width: 48%;
 }
 
 .all-properties {

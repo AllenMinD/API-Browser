@@ -41,7 +41,7 @@
       <el-form-item label="接口说明">
         <el-input
           type="textarea"
-          :autosize="{ minRows: 4}"
+          :autosize="{ minRows: 6 }"
           v-model="form.summary"
           placeholder="接口说明（选填）"
         ></el-input>
@@ -68,13 +68,13 @@
     </div>
 
     <!-- 显示保存后的json数据的dialog -->
-    <el-dialog title="返回的JSON数据" :visible.sync="showModel">
+    <!-- <el-dialog title="返回的JSON数据" :visible.sync="showModel">
       <tree-view :data="testData" :options="{maxDepth: 10}"></tree-view>
       <div slot="footer" class="dialog-footer">
         <el-button @click="showModel = false">取 消</el-button>
         <el-button type="primary" @click="showModel = false">确 定</el-button>
       </div>
-    </el-dialog>
+    </el-dialog> -->
 
     <div style="margin-top: 20px;" align="center">
       <el-button @click="previous" type="default">上一步</el-button>
@@ -90,8 +90,8 @@ export default {
     return {
       form: {
         // url: "https://conference.infoaas.com/conference/conference/advanced/fuzzysearch.do",
-        url:
-          "https://www.easy-mock.com/mock/5b7be7d835746647206ea91a/jsonTestData/jsonTestData",
+        // url: "https://www.easy-mock.com/mock/5b7be7d835746647206ea91a/jsonTestData/jsonTestData",
+        url: "",
         method: "GET",
         // header: '',
         // params: [{ key: "", necessary: "必填", default: "" }],
@@ -121,6 +121,9 @@ export default {
     this.form.method = getApiOptions.method;
     this.form.summary = getApiOptions.summary;
     Vue.set(this.form, "params", getApiOptions.params);
+
+    // 清空testData
+    this.$store.commit('clearDataFromApi');
   },
   computed: {
     testData: function() {
@@ -132,17 +135,17 @@ export default {
     }
   },
   watch: {
-    testData: function(val) {}
+
   },
   methods: {
-    parseExpMethod: function() {
-      var that = this;
-      var Fn = Function;
-      var data = that.testData;
-      this.parseExpression = new Fn("data", "return data." + that.expression)(
-        data
-      );
-    },
+    // parseExpMethod: function() {
+    //   var that = this;
+    //   var Fn = Function;
+    //   var data = that.testData;
+    //   this.parseExpression = new Fn("data", "return data." + that.expression)(
+    //     data
+    //   );
+    // },
 
     removeParam: function(param) {
       var index = this.form.params.indexOf(param);

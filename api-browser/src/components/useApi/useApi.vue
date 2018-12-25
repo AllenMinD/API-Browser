@@ -149,8 +149,14 @@
         that.api = res.data.data;
         console.log('根据id查询api的结果: ', that.api);
         that.$store.dispatch('storeApiToVuex', res.data.data);
-        // 转化params为数组，并且变为这样的形式 
-        // [{key1: '', value1: '', necessary: true } , {key2: '', value2: '', necessary: true }]
+        // 转化params为数组，主要是把default字段变成value
+        /*
+        [{
+          key: item.key,
+          value: item.default,
+          necessary: item.necessary
+        }]
+        */
         if (Array.isArray(that.api.params) && that.api.params.length > 0) {
           var trans_params = [];
           for (let item of that.api.params) {
@@ -208,7 +214,10 @@
     margin-bottom: 15px;
   }
 
-  .api-tag + .api-tag {
+  /* .api-tag + .api-tag {
     margin-left: 10px;
+  } */
+  .api-tag {
+    margin-right: 10px;
   }
 </style>

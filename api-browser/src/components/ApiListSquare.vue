@@ -135,7 +135,13 @@
   }
 
   .api-tag + .api-tag {
-    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+
+  .api-tag:nth-child(1) {
+    margin-right: 10px;
+    margin-bottom: 10px;
   }
 
 </style>
