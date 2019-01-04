@@ -1,0 +1,68 @@
+/* pages/personal/personal.wxss */
+
+page {
+  width: 100%;
+  height: 100vh;
+}
+
+.container {
+  width: 100%;
+  padding: 20rpx 0;
+  position: relative;
+}
+
+.header {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  height: 35vh;
+}
+
+.header .bg-img {
+  width: 100%;
+  opacity: .4;
+
+}
+
+.header .username {
+  position: absolute;
+  top: 15vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  color: #606266;
+  font-size: 45rpx;
+  font-weight: 600;
+  text-align: center;
+}
+
+.header .summary {
+  position: absolute;
+  top: 22vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  color: #606266;
+  font-size: 28rpx;
+  text-align: center;
+}
+
+.personal-info {
+  position: absolute;
+  top: 40vh;
+  width: 80%;
+  margin: 0 5%;
+  padding: 30rpx 5%;
+  border-radius: 10rpx;
+  box-shadow: 0 0 20rpx #DCDFE6;
+  background-color: #fff;
+}
+
+.logout-btn {
+  position: absolute;
+  top: 75vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  font-size: 30rpx;
+}

@@ -515,6 +515,29 @@ router.options('/search', function(req, res) {
   res.send();
 });
 
+// 获取赞数最多的前10个Api
+router.get('/getTopApis', function(req, res) {
+  res.header({"Access-Control-Allow-Origin": "*"});
+  Api.find({}).sort({ "stars": -1 }).exec(function(err, findRes) {
+    if (err) {
+      res.json({ success: false, message: '查找赞数最多的前十个Api出错' });
+      throw err;
+    } else {
+      console.log('获取赞数最多的前10个Api: ', findRes);
+      res.json({ success: true, message: '查询成功', data: findRes});
+    }
+  });
+});
+
+// 响应/getTopApis的预检响应
+router.options('/getTopApis', function(req, res) {
+  console.log('收到OPTIONS请求');
+  res.header({"Access-Control-Allow-Origin": "*"});
+  res.header({"Access-Control-Request-Method": "GET, POST, PUT"});
+  res.header({"Access-Control-Allow-Headers": "*"});
+  res.send();
+});
+
 // // 把修改后的数据发送会第三方服务器
 // router.post(
 //   '/sendBackData',

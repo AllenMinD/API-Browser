@@ -1,0 +1,43 @@
+/* wux内置样式 */
+@import './wux/dist/styles/index.wxss';
+
+/**app.wxss**/
+
+/* color */
+.default-blue {
+  color: #409EFF;
+}
+
+/* row-box (图标-文字-文字) */
+.row-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0rpx;
+  margin: 0 30rpx;
+  font-size: 26rpx;
+  color: #909399;
+}
+
+.row-box + .row-box {
+  border-top: 2rpx solid #E4E7ED;
+}
+
+.row-box .left {
+  display: flex;
+  align-items: center;
+}
+
+.row-box .right {
+  display: flex;
+  align-items: center;
+}
+
+.row-box .left .icon {
+  width: 32rpx;
+  margin-right: 20rpx;
+}
+
+.row-box .right text {
+  margin-right: 20rpx;
+}

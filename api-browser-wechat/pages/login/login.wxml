@@ -1,0 +1,27 @@
+<!--pages/login/login.wxml-->
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <view class="main-title">API Browser</view>
+    <view class="sub-title">发现不一样的API体验！</view>
+  </view>
+
+  <!-- 登录表单 -->
+  <view class="login-form">
+    <view class="input-username {{isActive1}}">
+      <image class="icon" src="/images/at.png" mode="widthFix"></image>
+      <input type="text" bindinput="inputUsername" bindfocus="highlightOn" bindblur="highlightOff" data-inputnum="1" cursor-spacing="60" placeholder="用户名"></input>
+    </view>
+    <view class="input-password {{isActive2}}">
+      <image class="icon" src="/images/lock.png" mode="widthFix"></image>
+      <input type="password" bindinput="inputPassword" bindfocus="highlightOn" bindblur="highlightOff" data-inputnum="2" cursor-spacing="60" placeholder="密码"></input>
+    </view>
+  </view>
+
+
+  <!-- 提交按钮 -->
+  <button class="submit-btn" bindtap="login">登录</button>
+
+  <!-- 提示 -->
+  <view class="tips">*注册请前往Web端。</view>
+</view>

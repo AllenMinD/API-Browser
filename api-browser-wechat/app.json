@@ -1,0 +1,44 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/mine/mine",
+    "pages/explore/explore",
+    "pages/personal/personal",
+    "pages/index/index",
+    "pages/logs/logs"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "API Browser",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#909399",
+    "selectedColor": "#409EFF",
+    "list": [
+      {
+        "iconPath": "/images/favorite.png",
+        "selectedIconPath": "/images/favorites-filling.png",
+        "pagePath": "pages/mine/mine",
+        "text": "我的"
+      },
+      {
+        "iconPath": "/images/discover.png",
+        "selectedIconPath": "/images/discover_fill.png",
+        "pagePath": "pages/explore/explore",
+        "text": "探索"
+      },
+      {
+        "iconPath": "/images/my_light.png",
+        "selectedIconPath": "/images/my_fill_light.png",
+        "pagePath": "pages/personal/personal",
+        "text": "个人"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
+  }
+}

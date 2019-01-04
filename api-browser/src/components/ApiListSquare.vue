@@ -1,4 +1,5 @@
 <template>
+  <!-- 首页中的全部api列表 -->
   <div class="api-list-square">
     <div 
       class="api-item"
@@ -53,7 +54,7 @@
   .api-list-square {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .api-item {

@@ -1,0 +1,43 @@
+<!--pages/personal/personal.wxml-->
+<view class="container">
+  <view class="header">
+    <image class="bg-img" mode="widthFix" src="/images/bg1.jpeg"></image>
+    <view class="username">{{username}}</view>
+    <view class="summary">简介：{{summary}}</view>
+  </view>
+
+  <view class="personal-info">
+    <view class="row-box email">
+      <view class="left">
+        <image class="icon" mode="widthFix" src="/images/email.png"></image>
+        <text>邮箱</text>
+      </view>
+      <view class="right">
+        <text>{{email}}</text>
+        <!-- <wux-icon type="ios-arrow-forward" size="22" color="#C0C4CC"/> -->
+      </view>
+    </view>
+    <view class="row-box my-star-count" bindtap="gotoMine" data-pagestatus="0">
+      <view class="left">
+        <image class="icon" mode="widthFix" src="/images/favorite_1.png"></image>
+        <text>我的收藏</text>
+      </view>
+      <view class="right">
+        <text>{{starCount}}</text>
+        <wux-icon type="ios-arrow-forward" size="22" color="#C0C4CC"/>
+      </view>
+    </view>
+    <view class="row-box my-api-count" bindtap="gotoMine" data-pagestatus="1">
+      <view class="left">
+        <image class="icon" mode="widthFix" src="/images/box.png"></image>
+        <text>我的API</text>
+      </view>
+      <view class="right">
+        <text>{{apiCount}}</text>
+        <wux-icon type="ios-arrow-forward" size="22" color="#C0C4CC"/>
+      </view>
+    </view>
+  </view>
+
+  <button class="logout-btn" bindtap="logout">退出登录</button>
+</view>
