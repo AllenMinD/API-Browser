@@ -1,0 +1,47 @@
+<!--pages/search/search.wxml-->
+<view class="container">
+  <!-- 搜索框 -->
+  <view class="search">
+    <view class="search-form">
+      <text class="fa fa-search"></text>
+      <input type="text" value="{{searchKeyword}}" confirm-type="search" bindconfirm='searchByKeyword' focus="{{autoFocus}}"></input>
+    </view>
+  </view>
+
+  <!-- 内容区域 -->
+  <view class="main-content">
+    <!-- 热门标签 -->
+    <view class="top-tag-list" wx:if="{{!showingApi}}">
+      <view class="list-title">热门标签</view>
+      <view class="top-tag" wx:for="{{topTags}}" wx:key="{{index}}" bindtap="searchByTag" data-tag="{{item}}">
+        {{item}}
+      </view>
+    </view>
+
+    <view class="back" bindtap='back' wx:if="{{showingApi}}">
+      <text class="fa fa-arrow-left"></text>
+    </view>
+
+    <!-- 搜索结果 -->
+    <view class="search-result-list" wx:if="{{showingApi}}">
+      <view class="list-item" wx:for="{{resultList}}" wx:key="{{index}}">
+        <view class="title">{{item.title}}</view>
+        <view class="summary">{{item.summary}}</view>
+        <view class="wrap">
+          <view class="method">{{item.method}}</view>
+          <view class="author">
+            <text class="fa fa-user"></text>
+            <text>{{item.author}}</text>
+          </view>
+          <view class="stars">
+            <text class="fa fa-star"></text>
+            <text>{{item.stars}}</text>
+          </view>
+        </view>
+        <view class="tags-list">
+          <view class="tag" wx:for="{{item.tags}}" wx:for-index="index2" wx:for-item="tag" wx:key="{{index2}}" wx:>{{tag}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

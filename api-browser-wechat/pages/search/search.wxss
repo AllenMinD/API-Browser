@@ -1,4 +1,5 @@
-/* pages/explore/explore.wxss */
+/* pages/search/search.wxss */
+
 page {
   width: 100%;
   height: 100%;
@@ -11,22 +12,15 @@ page {
   color: #909399;
 }
 
-.content {
-  padding: 20rpx 30rpx;
-}
-
-swiper {
-  height: 100%;
-}
-
 /* 搜索框 */
+
 .search {
   width: 100%;
   height: 100rpx;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #F2F6FC;
+  background-color: #f2f6fc;
 }
 
 .search-form {
@@ -38,7 +32,7 @@ swiper {
 }
 
 .search-form .fa {
-  color: #E4E7ED;
+  color: #e4e7ed;
   margin: 0 20rpx 0 40rpx;
 }
 
@@ -46,6 +40,33 @@ swiper {
   width: 530rpx;
   margin-right: 40rpx;
   background-color: #fff;
+}
+
+/* 热门标签列表 */
+
+.top-tag-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.list-title {
+  color: #606266;
+  font-size: 40rpx;
+  font-weight: 600rpx;
+  margin: 100rpx 0 30rpx 0;
+}
+
+.top-tag {
+  color: #409eff;
+  font-size: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+/* 搜索返回结果容器 */
+.search-result-list {
+  padding: 30rpx;
 }
 
 /* 每个api的样式 */
@@ -120,10 +141,27 @@ swiper {
   margin-left: 10rpx;
 }
 
-/* 下拉加载更多提示 */
-.load-more-tips {
+/* 返回搜索首页按钮 */
+
+.back {
+  position: fixed;
+  right: 20rpx;
+  bottom: 60rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80rpx;
+  height: 80rpx;
   font-size: 30rpx;
-  color: #909399;
-  text-align: center;
-  padding: 40rpx 0;
+  color: #fff;
+  background-color: #409eff;
+  border: none;
+  border-radius: 100rpx;
+  box-shadow: 0 0 20rpx #409eff;
+}
+
+.back .fa {
+  margin: 0;
+  padding: 0;
+  color: #fff;
 }

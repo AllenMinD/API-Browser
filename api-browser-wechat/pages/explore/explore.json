@@ -1,3 +1,7 @@
 {
-  "usingComponents": {}
+  "usingComponents": {
+    "wux-tabs": "../../wux/dist/tabs/index",
+    "wux-tab": "../../wux/dist/tab/index",
+    "wux-badge": "../../wux/dist/badge/index"
+  }
 }

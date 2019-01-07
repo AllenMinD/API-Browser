@@ -1,2 +1,73 @@
 <!--pages/explore/explore.wxml-->
-<text>pages/explore/explore.wxml</text>
+<view class="container">
+  <!-- 搜索框 -->
+  <view class="search">
+    <view class="search-form">
+      <text class="fa fa-search"></text>
+      <input type="text" confirm-type="search" bindfocus="goSearchPage"></input>
+    </view>
+  </view>
+
+  <!-- 内容容器 -->
+  <wux-tabs wux-class="bordered" controlled current="{{ key }}" bindchange="onTabsChange" theme="calm">
+    <block wx:for="{{ tabs }}" wx:key="key">
+      <wux-tab key="{{ item.key }}" title="{{ item.title }}"></wux-tab>
+    </block>
+  </wux-tabs>
+  <swiper style="height: {{swiperHeight + 'px'}}" current="{{ index }}" bindchange="onSwiperChange">
+    <block wx:for="{{ tabs }}" wx:key="key">
+      <swiper-item>
+        <view class="content" wx:if="{{item.key == 'tab0'}}">
+          <view class="all-api-list">
+            <view class="list-item" wx:for="{{allApis}}" wx:key="{{index}}">
+              <view class="title">{{item.title}}</view>
+              <view class="summary">{{item.summary}}</view>
+              <view class="wrap">
+                <view class="method">{{item.method}}</view>
+                <view class="author">
+                  <text class="fa fa-user"></text>
+                  <text>{{item.author}}</text>
+                </view>
+                <view class="stars">
+                  <text class="fa fa-star"></text>
+                  <text>{{item.stars}}</text>
+                </view>
+              </view>
+              <view class="tags-list">
+                <view class="tag" wx:for="{{item.tags}}" wx:for-index="index2" wx:for-item="tag" wx:key="{{index2}}" wx:>{{tag}}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="content" wx:if="{{item.key == 'tab1'}}">
+          <view class="top-ten-api-list">
+            <view class="list-item" wx:for="{{topTenApis}}" wx:key="{{index}}">
+              <view class="title">{{item.title}}</view>
+              <view class="summary">{{item.summary}}</view>
+              <view class="wrap">
+                <view class="method">{{item.method}}</view>
+                <view class="author">
+                  <text class="fa fa-user"></text>
+                  <text>{{item.author}}</text>
+                </view>
+                <view class="stars">
+                  <text class="fa fa-star"></text>
+                  <text>{{item.stars}}</text>
+                </view>
+              </view>
+              <view class="tags-list">
+                <view class="tag" wx:for="{{item.tags}}" wx:for-index="index2" wx:for-item="tag" wx:key="{{index2}}" wx:>{{tag}}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="content" wx:if="{{item.key == 'tab2'}}">
+          暂无数据
+        </view>
+      </swiper-item>
+    </block>
+  </swiper>
+
+  <!-- 下拉加载更多 -->
+  <view class="load-more-tips">下拉加载更多...</view>
+</view>

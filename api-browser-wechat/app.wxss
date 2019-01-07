@@ -1,14 +1,60 @@
+/* 
+默认蓝色：color: #409EFF;
+url颜色：color: #006621;
+下划线：border-bottom: 2rpx solid #C0C4CC;
+盒子: 
+  border-radius: 10rpx;
+  box-shadow: 0 0 20rpx #DCDFE6;
+ */
+
 /* wux内置样式 */
 @import './wux/dist/styles/index.wxss';
+
+/* font-awesome字体库 */
+@import "./font-awesome/font-awesome.wxss";
+
+/*增加`fa`样式*/
+
+.fa {
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+  margin-right: 10rpx;
+  color: #409eff;
+}
+
+.fa-user::before {
+  content: '\f007';
+}
+
+.fa-star::before {
+  content: '\f005';
+}
+
+.fa-search::before {
+  content: '\f002';
+}
+
+.fa-arrow-left::before {
+  content: '\f060';
+}
 
 /**app.wxss**/
 
 /* color */
+
 .default-blue {
-  color: #409EFF;
+  color: #409eff;
 }
 
 /* row-box (图标-文字-文字) */
+
 .row-box {
   display: flex;
   justify-content: space-between;
@@ -20,7 +66,7 @@
 }
 
 .row-box + .row-box {
-  border-top: 2rpx solid #E4E7ED;
+  border-top: 2rpx solid #e4e7ed;
 }
 
 .row-box .left {

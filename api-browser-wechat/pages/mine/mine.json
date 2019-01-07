@@ -1,3 +1,5 @@
 {
-  "usingComponents": {}
+  "usingComponents": {
+    "wux-segmented-control": "../../wux/dist/segmented-control/index"
+  }
 }

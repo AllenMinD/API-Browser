@@ -1,1 +1,127 @@
 /* pages/mine/mine.wxss */
+
+page {
+  width: 100%;
+}
+
+.container {
+  width: 100%;
+}
+
+/* tab标签栏 */
+
+.tab-menu {
+  display: flex;
+  border-radius: 10rpx;
+  overflow: hidden;
+  min-height: 54rpx;
+  opacity: 1;
+  margin: 0 30rpx 30rpx;
+}
+
+.tab-item {
+  color: #409eff;
+  border: 2rpx solid #409eff;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 28rpx;
+  line-height: 1;
+  transition: background 0.3s;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  border-left-width: 0;
+}
+
+.tab-item:first-child {
+  border-left-width: 2rpx;
+  border-radius: 10rpx 0 0 10rpx;
+}
+
+.tab-item:last-child {
+  border-radius: 0 10rpx 10rpx 0;
+}
+
+.tab-item.current {
+  color: #fff;
+  background: #409eff;
+}
+
+/* api列表容器 */
+
+.api-list-container {
+  width: calc(100% - 60rpx);
+  margin: 0 30rpx;
+}
+
+.list-item {
+  min-height: 336rpx;
+  padding: 20rpx 30rpx;
+  margin-bottom: 25rpx;
+  border-radius: 10rpx;
+  box-shadow: 0 0 20rpx #dcdfe6;
+  font-size: 28rpx;
+}
+
+.list-item .title {
+  color: #409eff;
+  margin-bottom: 20rpx;
+  font-size: 32rpx;
+  overflow: hidden; /* 【核心代码】 超出文本不显示 */
+  text-overflow: ellipsis; /* 【核心代码】 超出的区域的问题用省略号显示 */
+  white-space: nowrap; /* 文本不允许换行 */
+  word-wrap: break-word; /* 允许长单词换行到下一行*/
+  word-break: break-all; /* 允许在单词内换行 */
+}
+
+.summary {
+  min-height: 120rpx;
+  color: #909399;
+  margin-bottom: 20rpx;
+  text-overflow: -o-ellipsis-lastline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* 允许显示4行，超过4行就用省略号表示 */
+  -webkit-box-orient: vertical;
+}
+
+.list-item .wrap {
+  display: flex;
+  align-items: center;
+  margin-bottom: 22rpx;
+}
+
+.list-item .wrap .method {
+  border: 2rpx solid #409eff;
+  border-radius: 8rpx;
+  color: #409eff;
+  padding: 0rpx 5rpx;
+  margin-right: 45rpx;
+  font-size: 22rpx;
+}
+
+.list-item .wrap .author {
+  margin-right: 45rpx;
+}
+
+.tags-list {
+  max-height: 40rpx;
+  overflow: hidden;
+}
+
+.tag {
+  display: inline-block;
+  border: 2rpx solid hsla(220, 4%, 58%, 0.2);
+  border-radius: 8rpx;
+  color: #909399;
+  background-color: hsla(220, 4%, 58%, 0.1);
+  padding: 3rpx 8rpx;
+  font-size: 22rpx;
+}
+
+.tag + .tag {
+  margin-left: 10rpx;
+}

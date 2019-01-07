@@ -7,7 +7,9 @@ Page({
    * 页面的初始数据
    */
   data: {
-    pageStatus: 0,
+    curTab: 0,
+    myStars: [],
+    myApis: []
   },
 
   /**
@@ -30,42 +32,63 @@ Page({
   onShow: function () {
     const that = this;
     that.setData({
-      pageStatus: app.globalData.minePageStatus
+      curTab: parseInt(app.globalData.minePageStatus)
+    });
+
+    that.getMyStars();
+    that.getMyApis();
+  },
+
+  // 点击tab-menu
+  onTap(e) {
+    const that = this;
+    let index = parseInt(e.currentTarget.dataset.index);
+    if (that.data.curTab === index) {
+      return;
+    } else {
+      that.setData({
+        curTab: index
+      });
+    }
+  },
+
+  // 获取我的收藏
+  getMyStars() {
+    const that = this;
+    let username = wx.getStorageSync('username');
+    wx.request({
+      url: app.globalData.domain + '/api/getMyStars?username=' + username,
+      header: {
+        'Authorization': wx.getStorageSync('token')
+      },
+      success(res) {
+        console.log('调用getMyStars接口返回的结果:', res);
+        if (res.data.success) {
+          that.setData({
+            myStars: res.data.data
+          });
+        }
+      }
     });
   },
 
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide: function () {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
+  // 获取我的api
+  getMyApis() {
+    const that = this;
+    let username = wx.getStorageSync('username');
+    wx.request({
+      url: app.globalData.domain + '/api/getMyApi?username=' + username,
+      header: {
+        'Authorization': wx.getStorageSync('token')
+      },
+      success(res) {
+        console.log('调用getMyApi接口返回的结果:', res);
+        if (res.data.success) {
+          that.setData({
+            myApis: res.data.data
+          });
+        }
+      }
+    });
   }
 })

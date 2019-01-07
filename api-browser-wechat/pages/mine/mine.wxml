@@ -1,2 +1,56 @@
 <!--pages/mine/mine.wxml-->
-<text>pages/mine/mine.wxml {{pageStatus}}</text>
+<view class="container">
+  <!-- 头部Tab分段器 -->
+  <!-- <wux-segmented-control theme="calm" values="{{ ['我的收藏', '我的API'] }}" defaultCurrent="{{pageStatus}}" /> -->
+
+  <view class="tab-menu">
+    <view class="tab-item {{ curTab == 0 ? 'current' : ''}}" bindtap="onTap" data-index="0">我的收藏</view>
+    <view class="tab-item {{ curTab == 1 ? 'current' : ''}}" bindtap="onTap" data-index="1">我的API</view>
+  </view>
+
+  <view class="api-list-container">
+    <!-- 我的收藏 列表-->
+    <view class="my-star-list" wx:if="{{curTab == 0}}">
+      <view class="list-item" wx:for="{{myStars}}" wx:key="{{index}}">
+        <view class="title">{{item.title}}</view>
+        <view class="summary">{{item.summary}}</view>
+        <view class="wrap">
+          <view class="method">{{item.method}}</view>
+          <view class="author">
+            <text class="fa fa-user"></text>
+            <text>{{item.author}}</text>
+          </view>
+          <view class="stars">
+            <text class="fa fa-star"></text>
+            <text>{{item.stars}}</text>
+          </view>
+        </view>
+        <view class="tags-list">
+          <view class="tag" wx:for="{{item.tags}}"  wx:for-index="index2" wx:for-item="tag" wx:key="{{index2}}" wx:>{{tag}}</view> 
+        </view>
+      </view>
+    </view>
+
+    <!-- 我的API 列表 -->
+    <view class="my-api-list" wx:if="{{curTab == 1}}">
+      <view class="list-item" wx:for="{{myApis}}" wx:key="{{index}}">
+        <view class="title">{{item.title}}</view>
+        <view class="summary">{{item.summary}}</view>
+        <view class="wrap">
+          <view class="method">{{item.method}}</view>
+          <view class="author">
+            <text class="fa fa-user"></text>
+            <text>{{item.author}}</text>
+          </view>
+          <view class="stars">
+            <text class="fa fa-star"></text>
+            <text>{{item.stars}}</text>
+          </view>
+        </view>
+        <view class="tags-list">
+          <view class="tag" wx:for="{{item.tags}}"  wx:for-index="index2" wx:for-item="tag" wx:key="{{index2}}" wx:>{{tag}}</view> 
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
