@@ -12,7 +12,7 @@ page {
 }
 
 .content {
-  padding: 20rpx 30rpx;
+  /* padding: 20rpx 30rpx; */
 }
 
 swiper {
@@ -53,7 +53,7 @@ swiper {
 .list-item {
   min-height: 336rpx;
   padding: 20rpx 30rpx;
-  margin-bottom: 25rpx;
+  margin: 25rpx 20rpx;
   border-radius: 10rpx;
   box-shadow: 0 0 20rpx #dcdfe6;
   font-size: 28rpx;
@@ -125,5 +125,5 @@ swiper {
   font-size: 30rpx;
   color: #909399;
   text-align: center;
-  padding: 40rpx 0;
+  padding: 20rpx 0 40rpx;
 }

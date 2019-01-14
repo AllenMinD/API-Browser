@@ -23,13 +23,31 @@ Page({
       },
     ],
 
-    swiperHeight: 0,  // swiper的高度
     allApis: [],  // 全部Api列表
     topTenApis: [],  // 排行前十的Api
+    lastId_all: '',  // 全部api列表每次分页返回api列表的最后一个api的_id
+    loadMoreTip: '上拉加载更多',
+  },
+
+  onLoad(options) {
+    wx.getSystemInfo({
+      success: (res) => {
+        this.setData({
+          height: res.windowHeight
+        })
+      }
+    })
   },
 
   onShow() {
     const that = this;
+
+    // 初始化数据
+    that.setData({
+      allApis: [],  // 全部Api列表
+      topTenApis: [],  // 排行前十的Api
+      lastId_all: '',  // 全部api列表每次分页返回api列表的最后一个api的_id
+    });
 
     that.getAllApis();  // 获取全部Api
     that.getTopTenApis();  // 获取排名前十的Api
@@ -42,20 +60,9 @@ Page({
     const { key } = e.detail
     const index = this.data.tabs.map((n) => n.key).indexOf(key)
 
-    // 根据Tabs内容来设置swiper的高度
-    let swiperHeight_temp = ''; 
-    if (index === 0) {
-      swiperHeight_temp = that.data.allApis.length * 205;
-    } else if (index === 1) {
-      swiperHeight_temp = that.data.topTenApis.length * 205;
-    } else {
-      swiperHeight_temp = '200rpx';
-    }
-
     this.setData({
       key,
       index,
-      swiperHeight: swiperHeight_temp
     })
   },
 
@@ -76,14 +83,25 @@ Page({
   // 获取所有Api
   getAllApis() {
     const that = this;
+    let pageSize = 5;
+    let lastId = that.data.lastId_all;
     wx.request({
-      url: app.globalData.domain + '/api/getAllApis',
+      url: app.globalData.domain + `/api/getAllApis?pageSize=${pageSize}&lastId=${lastId}`,
       success(res) {
         console.log('调用getAllApis接口返回的结果：', res);
         if (res.data.success) {
+          if (res.data.data.length == 0 || res.data.data == null) {
+            that.setData({
+              loadMoreTip: '我也是有底线的'
+            });
+          } else {
+            that.setData({
+              loadMoreTip: '上拉加载更多'
+            });
+          }
           that.setData({
-            allApis: res.data.data,
-            swiperHeight: res.data.data.length * 205  // 初始化swiper高度
+            allApis: that.data.allApis.concat(res.data.data),
+            lastId_all: res.data.lastId,
           });
         }
       }
@@ -110,6 +128,25 @@ Page({
   goSearchPage() {
     wx.navigateTo({
       url: '/pages/search/search',
+    })
+  },
+
+  // 滚动加载更多
+  onLower(e) {
+    const that = this;
+    let curTab = e.currentTarget.dataset.curtab;
+    if (curTab ===  'tab0') {
+      // “全部”列表加载更多
+      that.getAllApis();
+    }
+  },
+
+  // 跳转到使用api页面
+  gotoUseApi(e) {
+    const that = this;
+    let apiId = e.currentTarget.dataset.id;
+    wx.navigateTo({
+      url: `/pages/useapi/useapi?apiId=${apiId}`,
     })
   }
 

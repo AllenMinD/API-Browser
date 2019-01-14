@@ -75,6 +75,13 @@ App({
           wx.switchTab({
             url: '/pages/explore/explore',
           });
+        } else {
+          wx.showModal({
+            title: '登录失败',
+            content: res.data.message,
+            confirmColor: '#409eff',
+            showCancel: false
+          })
         }
       }
     })

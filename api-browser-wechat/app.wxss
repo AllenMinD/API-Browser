@@ -45,6 +45,18 @@ url颜色：color: #006621;
   content: '\f060';
 }
 
+.fa-bars::before {
+  content: '\f0c9';
+}
+
+.fa-cog::before {
+  content: '\f013';
+}
+
+.fa-times-circle::before {
+  content: '\f057';
+}
+
 /**app.wxss**/
 
 /* color */

@@ -2,10 +2,12 @@
 
 page {
   width: 100%;
+  height: 100%;
 }
 
 .container {
   width: 100%;
+  height: 100%;
 }
 
 /* tab标签栏 */
@@ -52,14 +54,18 @@ page {
 /* api列表容器 */
 
 .api-list-container {
-  width: calc(100% - 60rpx);
-  margin: 0 30rpx;
+  height: 100%;
+}
+
+.my-star-list,
+.my-api-list {
+  height: 100%;
 }
 
 .list-item {
   min-height: 336rpx;
   padding: 20rpx 30rpx;
-  margin-bottom: 25rpx;
+  margin: 25rpx 30rpx;
   border-radius: 10rpx;
   box-shadow: 0 0 20rpx #dcdfe6;
   font-size: 28rpx;
@@ -124,4 +130,12 @@ page {
 
 .tag + .tag {
   margin-left: 10rpx;
+}
+
+/* 下拉加载更多提示 */
+.load-more-tips {
+  font-size: 30rpx;
+  color: #909399;
+  text-align: center;
+  padding: 20rpx 0 40rpx;
 }

@@ -66,7 +66,7 @@ page {
 
 /* 搜索返回结果容器 */
 .search-result-list {
-  padding: 30rpx;
+  /* padding: 30rpx; */
 }
 
 /* 每个api的样式 */
@@ -74,7 +74,7 @@ page {
 .list-item {
   min-height: 336rpx;
   padding: 20rpx 30rpx;
-  margin-bottom: 25rpx;
+  margin: 25rpx 30rpx;
   border-radius: 10rpx;
   box-shadow: 0 0 20rpx #dcdfe6;
   font-size: 28rpx;
@@ -158,10 +158,19 @@ page {
   border: none;
   border-radius: 100rpx;
   box-shadow: 0 0 20rpx #409eff;
+  z-index: 999;
 }
 
 .back .fa {
   margin: 0;
   padding: 0;
   color: #fff;
+}
+
+/* 下拉加载更多提示 */
+.load-more-tips {
+  font-size: 30rpx;
+  color: #909399;
+  text-align: center;
+  padding: 20rpx 0 40rpx;
 }

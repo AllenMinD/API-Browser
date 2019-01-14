@@ -24,24 +24,30 @@
 
     <!-- 搜索结果 -->
     <view class="search-result-list" wx:if="{{showingApi}}">
-      <view class="list-item" wx:for="{{resultList}}" wx:key="{{index}}">
-        <view class="title">{{item.title}}</view>
-        <view class="summary">{{item.summary}}</view>
-        <view class="wrap">
-          <view class="method">{{item.method}}</view>
-          <view class="author">
-            <text class="fa fa-user"></text>
-            <text>{{item.author}}</text>
+      <scroll-view scroll-y='true' style="height:{{height}}px" bindscrolltolower='onLower'>
+        <!-- 列表信息 -->
+        <view class="list-item" wx:for="{{resultList}}" wx:key="{{index}}" bindtap="gotoUseApi" data-id="{{item._id}}">
+          <view class="title">{{item.title}}</view>
+          <view class="summary">{{item.summary}}</view>
+          <view class="wrap">
+            <view class="method">{{item.method}}</view>
+            <view class="author">
+              <text class="fa fa-user"></text>
+              <text>{{item.author}}</text>
+            </view>
+            <view class="stars">
+              <text class="fa fa-star"></text>
+              <text>{{item.stars}}</text>
+            </view>
           </view>
-          <view class="stars">
-            <text class="fa fa-star"></text>
-            <text>{{item.stars}}</text>
+          <view class="tags-list">
+            <view class="tag" wx:for="{{item.tags}}" wx:for-index="index2" wx:for-item="tag" wx:key="{{index2}}">{{tag}}</view>
           </view>
         </view>
-        <view class="tags-list">
-          <view class="tag" wx:for="{{item.tags}}" wx:for-index="index2" wx:for-item="tag" wx:key="{{index2}}" wx:>{{tag}}</view>
-        </view>
-      </view>
+
+        <!-- 加载更多 -->
+        <view class="load-more-tips">{{loadMoreTip}}</view>
+      </scroll-view>
     </view>
   </view>
 </view>

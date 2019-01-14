@@ -11,46 +11,58 @@
   <view class="api-list-container">
     <!-- 我的收藏 列表-->
     <view class="my-star-list" wx:if="{{curTab == 0}}">
-      <view class="list-item" wx:for="{{myStars}}" wx:key="{{index}}">
-        <view class="title">{{item.title}}</view>
-        <view class="summary">{{item.summary}}</view>
-        <view class="wrap">
-          <view class="method">{{item.method}}</view>
-          <view class="author">
-            <text class="fa fa-user"></text>
-            <text>{{item.author}}</text>
+      <scroll-view scroll-y='true' style="height:{{height}}px" bindscrolltolower='onLower' data-curtab="{{curTab}}">
+        <!-- 列表信息 -->
+        <view class="list-item" wx:for="{{myStars}}" wx:key="{{index}}" bindtap="gotoUseApi" data-id="{{item._id}}">
+          <view class="title">{{item.title}}</view>
+          <view class="summary">{{item.summary}}</view>
+          <view class="wrap">
+            <view class="method">{{item.method}}</view>
+            <view class="author">
+              <text class="fa fa-user"></text>
+              <text>{{item.author}}</text>
+            </view>
+            <view class="stars">
+              <text class="fa fa-star"></text>
+              <text>{{item.stars}}</text>
+            </view>
           </view>
-          <view class="stars">
-            <text class="fa fa-star"></text>
-            <text>{{item.stars}}</text>
+          <view class="tags-list">
+            <view class="tag" wx:for="{{item.tags}}" wx:for-index="index2" wx:for-item="tag" wx:key="{{index2}}" wx:>{{tag}}</view>
           </view>
         </view>
-        <view class="tags-list">
-          <view class="tag" wx:for="{{item.tags}}"  wx:for-index="index2" wx:for-item="tag" wx:key="{{index2}}" wx:>{{tag}}</view> 
-        </view>
-      </view>
+
+        <!-- 加载更多 -->
+        <view class="load-more-tips">{{loadMoreTip_star}}</view>
+      </scroll-view>
     </view>
 
     <!-- 我的API 列表 -->
     <view class="my-api-list" wx:if="{{curTab == 1}}">
-      <view class="list-item" wx:for="{{myApis}}" wx:key="{{index}}">
-        <view class="title">{{item.title}}</view>
-        <view class="summary">{{item.summary}}</view>
-        <view class="wrap">
-          <view class="method">{{item.method}}</view>
-          <view class="author">
-            <text class="fa fa-user"></text>
-            <text>{{item.author}}</text>
+      <scroll-view scroll-y='true' style="height:{{height}}px" bindscrolltolower='onLower' data-curtab="{{curTab}}">
+        <!-- 列表信息 -->
+        <view class="list-item" wx:for="{{myApis}}" wx:key="{{index}}" bindtap="gotoUseApi" data-id="{{item._id}}">
+          <view class="title">{{item.title}}</view>
+          <view class="summary">{{item.summary}}</view>
+          <view class="wrap">
+            <view class="method">{{item.method}}</view>
+            <view class="author">
+              <text class="fa fa-user"></text>
+              <text>{{item.author}}</text>
+            </view>
+            <view class="stars">
+              <text class="fa fa-star"></text>
+              <text>{{item.stars}}</text>
+            </view>
           </view>
-          <view class="stars">
-            <text class="fa fa-star"></text>
-            <text>{{item.stars}}</text>
+          <view class="tags-list">
+            <view class="tag" wx:for="{{item.tags}}" wx:for-index="index2" wx:for-item="tag" wx:key="{{index2}}" wx:>{{tag}}</view>
           </view>
         </view>
-        <view class="tags-list">
-          <view class="tag" wx:for="{{item.tags}}"  wx:for-index="index2" wx:for-item="tag" wx:key="{{index2}}" wx:>{{tag}}</view> 
-        </view>
-      </view>
+
+        <!-- 加载更多 -->
+        <view class="load-more-tips">{{loadMoreTip_myapi}}</view>
+      </scroll-view>
     </view>
   </view>
 </view>

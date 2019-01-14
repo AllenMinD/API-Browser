@@ -1,0 +1,11 @@
+{
+  "usingComponents": {
+    "wux-cell-group": "../../wux/dist/cell-group/index",
+    "wux-cell": "../../wux/dist/cell/index",
+    "wux-input": "../../wux/dist/input/index",
+    "wux-input-number": "../../wux/dist/input-number/index",
+
+    "wux-button": "../../wux/dist/button/index",
+    "wux-spin": "../../wux/dist/spin/index"
+  }
+}

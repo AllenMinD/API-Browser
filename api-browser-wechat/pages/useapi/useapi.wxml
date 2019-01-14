@@ -1,0 +1,139 @@
+<!--pages/useapi/useapi.wxml-->
+<view class="container">
+  <!-- api信息 -->
+  <view class="modal-box api-info" wx:if="{{showApiInfoFlag}}">
+    <view class="white-box">
+      <text class="fa fa-times-circle" bindtap="closeModal"></text>
+      <scroll-view scroll-y='true'>
+        <view class="title">{{api.title}}</view>
+        <view class="link">
+          <view class="method">{{api.method}}</view>
+          <view class="url">{{api.url}}</view>
+        </view>
+        <view class="author">
+          <text class="fa fa-user"></text>
+          <text>{{api.author}}</text>
+        </view>
+        <view class="summary">{{api.summary}}</view>
+        <view class="tag-list">
+          <view class="tag" wx:for="{{api.tags}}" wx:for-index="index" wx:for-item="tag" wx:key="{{index}}" wx:>{{tag}}</view>
+        </view>
+        <button class="star-btn {{isCollected ? 'active' : ''}}" bindtap="collectApit">
+          <text class="fa fa-star"></text>
+          <text wx:if="{{isCollected}}">已收藏</text>
+          <text wx:else>收藏</text>
+          <text>{{api.stars}}</text>
+        </button>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- api参数设置 -->
+  <view class="modal-box params-options" wx:if="{{showApiParamsFlag}}">
+    <view class="white-box">
+      <text class="fa fa-times-circle" bindtap="closeModal"></text>
+      <scroll-view scroll-y='true'>
+        <!-- 发送请求按钮：保存参数设置，发送请求 -->
+        <button class="send-req" bindtap="sendReq">发送请求</button>
+        <!-- <view class="title">设置请求参数</view> -->
+        <wux-cell-group title="设置请求参数">
+          <view class="param-item" wx:for="{{api.params}}" wx:key="{{index}}">
+            <wux-cell title="" hover-class="none">
+              <wux-input value="{{item.value ? item.value : item.default}}" controlled label="{{item.key + '(' + item.necessary + ')'}}" bind:change="changeParams" data-itemindex="{{index}}" />
+            </wux-cell>
+          </view>
+        </wux-cell-group>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 头部 -->
+  <view class="header">
+    <text class="fa fa-bars" bindtap="showApiInfo"></text>
+    <view class="api-title">{{api.title}}</view>
+    <text class="fa fa-cog" bindtap="showApiParams"></text>
+  </view>
+
+  <!-- api返回数据可视化区域 -->
+  <view class="viewport">
+    <wux-spin nested spinning="{{ loading }}" tip="数据加载中..." size="large">
+      <view class="content">
+        <view class="panel">
+          <!-- 返回上一节点 -->
+          <view class="backToLast" wx:if="{{stack.length > 0}}" bindtap="backToLast">
+            <text class="fa fa-arrow-left"></text>
+          </view>
+          <!-- 面包屑 -->
+          <view class="breadcrumb">
+            <scroll-view class="scroll-box" style="margin-left: {{stack.length > 0 ? '75rpx' : 0}}; width: {{stack.length > 0 ? '625rpx' : '100%'}}" scroll-x>
+              <view class="breadcrumb-item" wx:for="{{nameStackForBread}}" wx:key="{{index}}">
+                <!-- 如果检测到配置对象中（viewOptions）对应的有设置键的中文名的时候，就用中文名来显示 -->
+                {{ viewOptions[item] != null && viewOptions[item].cnName ? viewOptions[item].cnName : item }}
+              </view>
+            </scroll-view>
+          </view>
+        </view>
+
+        <!-- 表格控件 -->
+        <view class="table-view" wx:if="{{currentNode && currentNode.length !== 1}}">
+          <view class="table-header">
+            <!-- 如果检测到配置对象中（viewOptions）对应的有设置键的中文名的时候，就用中文名来显示 -->
+            {{ viewOptions[currentNodeKey] != null && viewOptions[currentNodeKey].cnName ? viewOptions[currentNodeKey].cnName : currentNodeKey }}
+          </view>
+          <scroll-view scroll-x scroll-y style="width: 100%">
+
+            <view class="table">
+              <view class="tr">
+                <view class="th" wx:for="{{columns}}" wx:for-item="column" wx:for-index="index1" wx:key="{{index1}}" wx:if="{{viewOptions[column] == null || viewOptions[column].isShow != 'false'}}">{{ viewOptions[column] != null && viewOptions[column].cnName != undefined ? viewOptions[column].cnName : column }}</view>
+              </view>
+
+
+              <view class="tr" wx:for="{{currentNode}}" wx:for-item="row" wx:for-index="index2" wx:key="{{index2}}">
+                <view class="td" wx:for="{{columns}}" wx:for-item="column" wx:for-index="index3" wx:key="{{index3}}" wx:if="{{viewOptions[column] == null || viewOptions[column].isShow != 'false'}}">
+                  <!-- 用row[column]来获取单元格内容 -->
+                  <view wx:if="{{canExpand[index2 + column]}}">
+                    <button class="expand-btn" bindtap="expand" data-expanddata="{{row[column]}}" data-keyname="{{column}}">展开</button>
+                  </view>
+                  <view wx:else>
+                    {{ row[column]?row[column]:'null' }}
+                  </view>
+                </view>
+              </view>
+            </view>
+          </scroll-view>
+        </view>
+
+        <!-- 卡片控件 -->
+        <view class="card-view" wx:if="{{currentNode && currentNode.length === 1}}">
+          <!-- 卡片头部 -->
+          <view class="card-header">
+            <!-- 如果检测到配置对象中（viewOptions）对应的有设置键的中文名的时候，就用中文名来显示 -->
+            <text>{{ viewOptions[currentNodeKey] != null && viewOptions[currentNodeKey].cnName ? viewOptions[currentNodeKey].cnName : currentNodeKey }}</text>
+          </view>
+
+          <!-- 卡片内容 -->
+          <view class="card-content">
+            <view class="card-row" wx:for="{{columns}}" wx:for-item="column" wx:key="{{index}}" wx:if="{{viewOptions[column] == null || viewOptions[column].isShow != 'false'}}">
+              <!-- 键名（有中文名显示中文名） -->
+              <view class="card-key" wx:if='{{viewOptions[column] != null && viewOptions[column].cnName != undefined}}'>
+                {{ viewOptions[column].cnName }}:
+              </view>
+              <!-- 键名（没有中文名则显示原名） -->
+              <view class="card-key" wx:else>
+                {{ column }}:
+              </view>
+
+              <!-- 键值（是对象则显示【展开】按钮） -->
+              <button class="expand-btn" bindtap="expand" data-expanddata="{{currentNode[0][column]}}" data-keyname="{{column}}" wx:if="{{canExpand[0 + column]}}">展开</button>
+              <!-- 键值（不是对象则直接显示） -->
+              <view class="card-value" wx:else>
+                {{ currentNode[0][column]?currentNode[0][column]:'null' }}
+              </view>
+            </view>
+          </view>
+        </view>
+
+      </view>
+    </wux-spin>
+  </view>
+</view>
