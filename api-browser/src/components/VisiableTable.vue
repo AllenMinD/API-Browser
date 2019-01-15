@@ -218,6 +218,11 @@ export default {
         newArray.push(val);
       }
       this.currentNode = newArray;
+      // 清空页面栈
+      this.currentNodeKey = "Root"; // 当前键值对的键
+      this.stack = []; // 节点内容栈
+      this.nameStack = []; // 节点键名栈（作为卡片的头部）
+      this.nameStackForBread = ["Root"]; // 节点键名栈 （作为面包屑）
       // this.getAllProperties(val); // 递归获取数据的所有字段
       // console.log("这个对象的属性有：", this.allProperties);
       // this.$store.commit("setAllProperties", this.allPropertiesTrans);
