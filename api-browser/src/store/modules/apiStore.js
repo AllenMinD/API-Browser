@@ -2,8 +2,8 @@ import axios from 'axios';
 import router from '../../router';
 var qs = require('qs');
 
-axios.defaults.baseURL = 'http://localhost:3000';
-// axios.defaults.baseURL = 'http://120.79.220.199:3000';
+// axios.defaults.baseURL = 'http://localhost:3000';
+axios.defaults.baseURL = 'http://120.79.220.199:3000';
 
 var state = {
   isTesting: false,
@@ -23,8 +23,8 @@ var state = {
   allApisList: [],
   searchApisList: [],
   tagApisList: [],
-  reqUrl: 'http://localhost:3000',
-  // reqUrl: 'http://120.79.220.199:3000',
+  // reqUrl: 'http://localhost:3000',
+  reqUrl: 'http://120.79.220.199:3000',
 };
 
 var getters = {
@@ -155,8 +155,24 @@ var actions = {
         console.log('更新Api的结果', res);
         if (!res.data.success) {
           alert('糟糕，后台数据更新出现了一些问题，API更新失败~')
+        } else {
+          let Vue = context.getters.getVueObj;
+          Vue.$message({
+            message: "更新api成功",
+            type: "success"
+          });
+          router.replace("/useapi/" + apiInfo.id);
         }
-      }).catch(function(error) {console.log(error);}
+      }).catch(function(err) {
+        console.log(err)
+        let Vue = context.getters.getVueObj;
+        Vue.$message({
+          message: "哎呀，token失效了，请重新登录",
+          type: "error"
+        });
+        context.commit('clearAuth');
+        router.replace('/signin');
+      }
     );
   },
   deleteApi: function(context, apiId) {
@@ -173,9 +189,24 @@ var actions = {
         console.log('删除api的结果', res);
         if (!res.data.success) {
           alert('糟糕，后台数据库删除数据出现了一些问题，API删除失败~')
+        } else {
+          let Vue = context.getters.getVueObj;
+          Vue.$message({
+            message: "删除api成功",
+            type: "success"
+          });
         }
         router.replace('/profile/' + context.getters.getUserName);
-      }).catch(function(err) {console.log(err)}
+      }).catch(function(err) {
+        console.log(err);
+        let Vue = context.getters.getVueObj;
+        Vue.$message({
+          message: "哎呀，token失效了，请重新登录",
+          type: "error"
+        });
+        context.commit('clearAuth');
+        router.replace('/signin');
+      }
     );
   },
   collectApi: function(context, apiIdAndUsername) {
@@ -196,7 +227,16 @@ var actions = {
         if (!res.data.success) {
           alert('糟糕，后台数据库删除数据出现了一些问题，API收藏失败~')
         }
-      }).catch(function(err) {console.log(err)}
+      }).catch(function(err) {
+        console.log(err)
+        let Vue = context.getters.getVueObj;
+        Vue.$message({
+          message: "哎呀，token失效了，请重新登录",
+          type: "error"
+        });
+        context.commit('clearAuth');
+        router.replace('/signin');
+      }
     );
   },
   cancelCollectApi: function(context, apiIdAndUsername) {
@@ -217,24 +257,38 @@ var actions = {
         if (!res.data.success) {
           alert('糟糕，后台数据库删除数据出现了一些问题，取消API收藏失败~')
         }
-      }).catch(function(err) {console.log(err)}
-    );
-  },
-  sendBackData : function(context, data) {
-    axios.post(
-      '/api/sendBackData', 
-      qs.stringify(data),
-      { headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': localStorage.getItem('token')
-        }
+      }).catch(function(err) {
+        console.log(err)
+        let Vue = context.getters.getVueObj;
+        Vue.$message({
+          message: "哎呀，token失效了，请重新登录",
+          type: "error"
+        });
+        context.commit('clearAuth');
+        router.replace('/signin');
       }
-      ).then(function(res) {
-        console.log('服务器响应', res);
-        alert(res.data.message);
-      }).catch(function(error) {console.log(error);}
     );
   },
+  // sendBackData : function(context, data) {
+  //   axios.post(
+  //     '/api/sendBackData', 
+  //     qs.stringify(data),
+  //     { headers: {
+  //         'Content-Type': 'application/x-www-form-urlencoded',
+  //         'Authorization': localStorage.getItem('token')
+  //       }
+  //     }
+  //     ).then(function(res) {
+  //       console.log('服务器响应', res);
+  //       alert(res.data.message);
+  //     }).catch(function(err) {
+  //       console.log(err)
+  //       alert('哎呀，token失效了，请重新登录');
+  //       context.commit('clearAuth');
+  //       router.replace('/signin');
+  //     }
+  //   );
+  // },
 };
 
 export default {

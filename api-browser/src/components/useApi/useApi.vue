@@ -86,6 +86,7 @@
 
 <script>
   import axios from 'axios';
+  import router from '../../router'
   import {prettyPrint} from '../../prettyprint.js';
   import VisiableTable from '../VisiableTable.vue';
   export default {
@@ -186,7 +187,16 @@
               break;
             }
           }
-        }).catch(function(err) {console.log(err)});
+        }).catch(function(err) {
+          console.log(err)
+          that.$message({
+            message: "哎呀，token失效了，请重新登录",
+            type: "error"
+          });
+          that.$store.commit('clearAuth');
+          router.replace('/signin');
+        }
+      );
     },
     components: {
       AppVisiableTable: VisiableTable

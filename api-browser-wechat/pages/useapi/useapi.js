@@ -111,9 +111,14 @@ Page({
     let data = that.data.api;
     // console.log('提交的表单', that.data.api);
 
-    // 显示加载动画
+    // 显示加载动画及初始化页面栈相关变量
     that.setData({
-      loading: true
+      loading: true,
+      showApiParamsFlag: false,
+      currentNodeKey: "Root", // 当前键值对的键
+      stack: [], // 节点内容栈
+      nameStack: [], // 节点键名栈（作为卡片的头部）
+      nameStackForBread: ["Root"], // 节点键名栈 （作为面包屑）
     });
 
     wx.request({
@@ -307,6 +312,10 @@ Page({
         },
         success(res) {
           console.log('调用/cancelCollectApi返回的结果：', res);
+
+          // 判断当401的情况下（因多端登录导致token被刷新而失效），需要用户重新登录
+          app.handleUnauthorized(res.statusCode);
+
           if (res.data.success) {
             that.setData({
               isCollected: !isCollected,
@@ -333,6 +342,10 @@ Page({
         },
         success(res) {
           console.log('调用/collectApi返回的结果：', res);
+
+          // 判断当401的情况下（因多端登录导致token被刷新而失效），需要用户重新登录
+          app.handleUnauthorized(res.statusCode);
+
           if (res.data.success) {
             that.setData({
               isCollected: !isCollected,
@@ -363,6 +376,10 @@ Page({
       },
       success(res) {
         console.log('调用/getMyStars接口返回的结果：', res);
+
+        // 判断当401的情况下（因多端登录导致token被刷新而失效），需要用户重新登录
+        app.handleUnauthorized(res.statusCode);
+
         if (res.data.success) {
           let resData = res.data.data;
           for (let item of resData) {

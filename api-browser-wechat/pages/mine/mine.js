@@ -23,7 +23,7 @@ Page({
     wx.getSystemInfo({
       success: (res) => {
         this.setData({
-          height: res.windowHeight
+          height: res.windowHeight + 150
         })
       }
     })
@@ -81,6 +81,10 @@ Page({
       },
       success(res) {
         console.log('调用getMyStars接口返回的结果:', res);
+
+        // 判断当401的情况下（因多端登录导致token被刷新而失效），需要用户重新登录
+        app.handleUnauthorized(res.statusCode);
+
         if (res.data.success) {
           if (res.data.data.length == 0) {  // 已经是最后一页
             that.setData({
@@ -97,7 +101,7 @@ Page({
             curPage_star: that.data.curPage_star + 1 
           });
         }
-      }
+      },
     });
   },
 
@@ -114,6 +118,10 @@ Page({
       },
       success(res) {
         console.log('调用getMyApi接口返回的结果:', res);
+
+        // 判断当401的情况下（因多端登录导致token被刷新而失效），需要用户重新登录
+        app.handleUnauthorized(res.statusCode);
+
         if (res.data.success) {
           if (res.data.data.length === 0 || res.data.data == null) {
             that.setData({

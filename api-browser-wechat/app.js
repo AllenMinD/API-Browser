@@ -78,7 +78,7 @@ App({
         } else {
           wx.showModal({
             title: '登录失败',
-            content: res.data.message,
+            content: res.data.message ? res.data.message : '登录失败',
             confirmColor: '#409eff',
             showCancel: false
           })
@@ -165,9 +165,30 @@ App({
     });
   },
 
+  // 判断当401的情况下（因多端登录导致token被刷新而失效），需要用户重新登录
+  handleUnauthorized(statusCode) {
+    // 判断token是否失效了
+    if (statusCode == 401) {
+      console.log('调用接口失败，原因是token失效了');
+      wx.showModal({
+        title: '请重新登录',
+        content: 'token发生了变化，请重新登录',
+        confirmColor: '#409eff',
+        showCancel: false,
+        success(res) {
+          console.log('跳转回登录页');
+          wx.reLaunch({
+            url: '/pages/login/login',
+          })
+        }
+      })
+    }
+  },
+
   globalData: {
     userInfo: null,
-    domain: "http://localhost:3000",
+    // domain: "http://localhost:3000",
+    domain: "http://120.79.220.199:3000",
     minePageStatus: 0,  // “我的（mine）”页面的状态，0表示显示“我的star”，1表示显示“我的api”
   }
 })

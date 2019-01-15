@@ -59,6 +59,9 @@
     },
     created: function() {
       this.$store.dispatch('tryAutoLogIn');
+
+      // 把vue实例对象传给Vuex，方便使用element框架的全局功能（例如消息提示功能）
+      this.$store.commit('saveVueObj', this);
     }
   }
 </script>

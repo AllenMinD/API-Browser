@@ -2,8 +2,8 @@ import axios from 'axios';
 import router from '../../router';
 var qs = require('qs');
 
-var reqUrl = 'http://localhost:3000';
-// var reqUrl = 'http://120.79.220.199:3000';
+// var reqUrl = 'http://localhost:3000';
+var reqUrl = 'http://120.79.220.199:3000';
 
 var that = this;
 
@@ -12,7 +12,8 @@ var state = {
   userName: null,
   userId: null,
   email: '',
-  profile: ''
+  profile: '',
+  Vue: null,  // 存放vue的实例对象，方便使用element框架的全局功能（例如消息提示功能）
 };
 
 var getters = {
@@ -30,6 +31,9 @@ var getters = {
   },
   getProfile: function(state) {
     return state.profile;
+  },
+  getVueObj: function(state) {
+    return state.Vue;
   }
 };
 
@@ -43,6 +47,9 @@ var mutations = {
     state.token = null;
     state.userName = null;
     state.userId = null;
+  },
+  saveVueObj: function(state, vueObj) {
+    state.Vue = vueObj;
   }
 };
 

@@ -70,9 +70,9 @@
             </view>
           </scroll-view>
         </view>
-        <view class="content" wx:if="{{item.key == 'tab2'}}" style="text-align: center; margin-top: 30rpx">
+        <!-- <view class="content" wx:if="{{item.key == 'tab2'}}" style="text-align: center; margin-top: 30rpx">
           稍后上线
-        </view>
+        </view> -->
       </swiper-item>
     </block>
   </swiper>

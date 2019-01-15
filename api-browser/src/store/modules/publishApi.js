@@ -2,8 +2,8 @@ import axios from 'axios';
 import router from '../../router';
 var qs = require('qs');
 
-axios.defaults.baseURL = 'http://localhost:3000';
-// axios.defaults.baseURL = 'http://120.79.220.199:3000';
+// axios.defaults.baseURL = 'http://localhost:3000';
+axios.defaults.baseURL = 'http://120.79.220.199:3000';
 
 var state = {
   active: 0,
@@ -84,8 +84,9 @@ var mutations = {
 };
 
 var actions = {
-  publishApi: function(context, userName) {  // 发布api
-  let apiInfo = { 
+  publishApi: function(context, data) {  // 发布api
+    let Vue = data.Vue;
+    let apiInfo = { 
       url: context.state.api.url,
       title: context.state.api.title,
       params: context.state.api.params,
@@ -93,7 +94,7 @@ var actions = {
       summary: context.state.api.summary,
       tags: context.state.api.tags,
       stars: 0,
-      author: userName,
+      author: data.userName,
       viewOptions: context.state.api.viewOptions
     };
     console.log('前端发来想要发布的信息：\n', apiInfo);
@@ -108,11 +109,23 @@ var actions = {
       }).then(function(res) {
         console.log('保存（发布）Api的结果：', res);
         if (res.data.success) {
+          Vue.$message({
+            message: "发布成功",
+            type: "success"
+          });
           router.replace('/useapi/' + res.data.saveRes._id);
         } else {
           alert(res.data.message);
         }
-      }).catch(function(error) {console.log(error);}
+      }).catch(function(err) {
+        console.log(err)
+        Vue.$message({
+          message: "哎呀，token失效了，请重新登录",
+          type: "error"
+        });
+        context.commit('clearAuth');
+        router.replace('/signin');
+      }
     );
   },
 };

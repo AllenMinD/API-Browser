@@ -17,6 +17,7 @@
 <script>
   import axios from 'axios';
   import apiList from '../ApiList.vue';
+  import router from "../../router";
   export default {
     data: function() {
       return {
@@ -41,7 +42,15 @@
           // console.log(res.data.data);
           that.myApis = res.data.data;
           that.myApis.canSet = true; // 可以修改api（显示“修改按钮”）
-        }).catch(function(error) {console.log(error)}
+        }).catch(function(err) {
+          console.log(err)
+          that.$message({
+            message: "哎呀，token失效了，请重新登录",
+            type: "error"
+          });
+          that.$store.commit('clearAuth');
+          router.replace('/signin');
+        }
       );
 
       axios.get(
@@ -54,7 +63,15 @@
           console.log(res);
           // console.log(res.data.data);
           that.myStars = res.data.data;
-        }).catch(function(error) {console.log(error)}
+        }).catch(function(err) {
+          console.log(err)
+          that.$message({
+            message: "哎呀，token失效了，请重新登录",
+            type: "error"
+          });
+          that.$store.commit('clearAuth');
+          router.replace('/signin');
+        }
       );
 
     }

@@ -17,10 +17,10 @@ Page({
         key: 'tab1',
         title: '排行榜',
       },
-      {
-        key: 'tab2',
-        title: '发布者',
-      },
+      // {
+      //   key: 'tab2',
+      //   title: '发布者',
+      // },
     ],
 
     allApis: [],  // 全部Api列表
@@ -33,7 +33,7 @@ Page({
     wx.getSystemInfo({
       success: (res) => {
         this.setData({
-          height: res.windowHeight
+          height: res.windowHeight + 150
         })
       }
     })

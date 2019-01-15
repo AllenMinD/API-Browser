@@ -85,12 +85,8 @@ export default {
 
       // 加上author字段（作者姓名）
       var userName = this.$store.getters.getUserName;
-      this.$store.dispatch("publishApi", userName);
+      this.$store.dispatch("publishApi", { userName, Vue: this});
       this.$store.commit("clearApiState");  // 保存成功后，重置vuex中的状态
-      this.$message({
-        message: "发布成功",
-        type: "success"
-      });
     },
 
     /*

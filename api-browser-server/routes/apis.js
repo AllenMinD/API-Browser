@@ -129,16 +129,44 @@ router.get(
   passport.authenticate('bearer', { session: false }),
   function(req, res) {
     res.header({"Access-Control-Allow-Origin": "*"});
+    let lastId = req.query.lastId;
+    let pageSize = parseInt(req.query.pageSize);
+    console.log(lastId, pageSize);
     // console.log(req.query.username);
     var author = req.query.username;
-    Api.find({ author: author }, function(err, apis) {
-      if (err) {
-        throw err;
-      } else {
-        // console.log(apis);
-        res.json({ success: true, message: '我的API', data: apis });
-      }
-    });
+    if (lastId == null || lastId == "") {  // 如果lastId为空，那么表示是 第一页
+      Api.find({ author: author }, null, { limit: pageSize, sort: {_id: -1} }, function(err, apis) {
+        if (err) {
+          throw err;
+        } else {
+          // console.log(apis);
+          let lastId_temp = '';
+          if (apis.length === 0 || apis == null) {
+            lastId_temp = '';
+          } else {
+            lastId_temp = apis[apis.length-1]._id;
+          }
+          res.json({ success: true, message: '我的API', data: apis, lastId: lastId_temp });
+        }
+      });
+    } else {  // 第1+n页
+      Api.find({ author: author, _id: { $lt: lastId } }, null, { limit: pageSize, sort: {_id: -1} }, function(err, apis) {
+        if (err) {
+          throw err;
+        } else {
+          // console.log(apis);
+          let lastId_temp = lastId;
+          if (apis.length === 0 || apis == null) {
+            lastId_temp = lastId;
+            res.json({ success: true, message: '我的API, 已经是最后一页了', data: [], lastId: lastId_temp });
+          } else {
+            lastId_temp = apis[apis.length-1]._id;
+            res.json({ success: true, message: '我的API', data: apis, lastId: lastId_temp });
+          }
+        }
+      });
+    }
+
     // res.json({ success: true, message: '服务器已经收到' });
   }
 );
@@ -250,12 +278,46 @@ router.options('/deleteapi', function(req, res) {
 });
 
 // 获取全部API
+// router.get('/getAllApis', function(req, res) {
+//   res.header({"Access-Control-Allow-Origin": "*"});
+//   Api.find({}, function(err, apis) {
+//     if (err) throw err;
+//     res.json({ success: true, message: '返回全部api', data: apis });
+//   });
+// });
+
+// 获取全部API - 加上分页
 router.get('/getAllApis', function(req, res) {
   res.header({"Access-Control-Allow-Origin": "*"});
-  Api.find({}, function(err, apis) {
-    if (err) throw err;
-    res.json({ success: true, message: '返回全部api', data: apis });
-  });
+  let lastId = req.query.lastId;
+  let pageSize = parseInt(req.query.pageSize);
+  console.log(lastId, pageSize);
+  if (lastId == null || lastId == "") {  // 如果lastId为空，那么表示是 第一页
+    Api.find({}, null, {limit: pageSize, sort: {_id: -1}}, function(err, apis) {
+      if (err) throw err;
+      // console.log(apis);
+      let lastId_temp = '';
+      if (apis.length === 0 || apis == null) {
+        lastId_temp = '';
+      } else {
+        lastId_temp = apis[apis.length-1]._id;
+      }
+      res.json({ success: true, message: '返回全部Api', data: apis, lastId: lastId_temp });
+    });
+  } else {  // 第1+n页
+    Api.find({_id: {$lt: lastId}}, null, {limit: pageSize, sort: {_id: -1}}, function(err, apis) {  
+      if (err) throw err;
+      // console.log(apis);
+      let lastId_temp = lastId;
+      if (apis.length === 0 || apis == null) {
+        lastId_temp = lastId;
+        res.json({ success: true, message: '返回全部Api, 已经是最后一页了', data: [], lastId: lastId_temp });
+      } else {
+        lastId_temp = apis[apis.length-1]._id;
+        res.json({ success: true, message: '返回全部Api', data: apis, lastId: lastId_temp });
+      }
+    });
+  }
 });
 
 // 响应/getAllApis的预检响应
@@ -361,21 +423,31 @@ router.get(
   '/getMyStars', 
   passport.authenticate('bearer', { session: false }),
   function(req, res) {
+    // let lastId = req.query.lastId;
+    let pageNo = parseInt(req.query.pageNo)
+    let pageSize = parseInt(req.query.pageSize);
+    console.log(pageNo, pageSize);
     res.header({"Access-Control-Allow-Origin": "*"});
     // console.log(req.query.username);
     var username = req.query.username;
     User
     .findOne({ name: username })
-    .populate('myStars')
+    .populate({
+      path: 'myStars',
+      options: { skip: pageNo * pageSize, limit: pageSize, sort: {_id: -1} }
+    })
+    // .skip(pageNo * pageSize)
+    // .limit(pageSize)
+    // .sort('_id', -1)
     .exec(function(err, user) {
       if (err) {
         throw err;
       } else {
         // console.log('查询的结果：', user.myStars);
+        // let lastId_temp = user.myStars[user.myStars.length-1]._id;
         res.json({ success: true, message: '我收藏的API', data: user.myStars });
       }
     });
-    // res.json({ success: true, message: '服务器已经收到' });
   }
 );
 
@@ -395,22 +467,53 @@ router.get(
     res.header({"Access-Control-Allow-Origin": "*"});
     // console.log('来自前端的keyword:', req.query.keyword);
     var query = new RegExp(req.query.tag, 'gi');
-    var findInTags = Api.find({ tags: query }).exec();
-    Promise.all([findInTags]).then(function(results) {
-      // console.log('查询结果：', results);
-      // 把结果合成一个数组方便返回
-      var resArray = [];
-      for (var i=0,len=results.length;i<len;i++) {
-        var strArr = JSON.stringify(resArray);
-        if (results[i] !== [] && strArr.indexOf(JSON.stringify(results[i][0])) == -1 ) {
-          resArray = resArray.concat(results[i]);
+    let lastId = req.query.lastId;
+    let pageSize = parseInt(req.query.pageSize);
+    if (lastId == null || lastId === '') {  // 第一页
+      var findInTags = Api.find({ tags: query }).limit(pageSize).sort({_id: -1}).exec();
+      Promise.all([findInTags]).then(function(results) {
+        // console.log('查询结果：', results);
+        // 把结果合成一个数组方便返回
+        var resArray = [];
+        for (var i=0,len=results.length;i<len;i++) {
+          var strArr = JSON.stringify(resArray);
+          if (results[i] !== [] && strArr.indexOf(JSON.stringify(results[i][0])) == -1 ) {
+            resArray = resArray.concat(results[i]);
+          }
         }
-      }
-      // console.log('合并后的结果:', resArray);
-      // done();
-      res.json({ success: true, message: '服务器已经收到了关键字', data: resArray });
-    });
-    // res.json({ success: true, message: '服务器已经收到' });
+        // console.log('合并后的结果:', resArray);
+        // done();
+        let lastId_temp = '';
+        if (resArray.length === 0) {
+          lastId_temp = ''
+        } else {
+          lastId_temp = resArray[resArray.length-1]._id;
+        }
+        res.json({ success: true, message: '服务器已经收到了关键字', data: resArray, lastId: lastId_temp });
+      });
+    } else {  // 第1+n页
+      var findInTags = Api.find({ tags: query, _id: {$lt: lastId}}).limit(pageSize).sort({_id: -1}).exec();
+      Promise.all([findInTags]).then(function(results) {
+        // console.log('查询结果：', results);
+        // 把结果合成一个数组方便返回
+        var resArray = [];
+        for (var i=0,len=results.length;i<len;i++) {
+          var strArr = JSON.stringify(resArray);
+          if (results[i] !== [] && strArr.indexOf(JSON.stringify(results[i][0])) == -1 ) {
+            resArray = resArray.concat(results[i]);
+          }
+        }
+        // console.log('合并后的结果:', resArray);
+        // done();
+        let lastId_temp = lastId;
+        if (resArray.length === 0) {
+          lastId_temp = lastId;
+        } else {
+          lastId_temp = resArray[resArray.length-1]._id;
+        }
+        res.json({ success: true, message: '服务器已经收到了关键字', data: resArray, lastId: lastId_temp });
+      });
+    }
   }
 );
 
@@ -488,22 +591,55 @@ router.get('/search', function(req, res) {
   res.header({"Access-Control-Allow-Origin": "*"});
   // console.log('来自前端的keyword:', req.query.keyword);
   var query = new RegExp(req.query.keyword, 'gi');
-  var findInTitle = Api.find({ title: query }).exec();
-  var findInUrl = Api.find({ url: query }).exec();
-  Promise.all([findInTitle, findInUrl]).then(function(results) {
-    // console.log('查询结果：', results);
-    // 把结果合成一个数组方便返回
-    var resArray = [];
-    for (var i=0,len=results.length;i<len;i++) {
-      var strArr = JSON.stringify(resArray);
-      if (results[i] !== [] && strArr.indexOf(JSON.stringify(results[i][0])) == -1 ) {
-        resArray = resArray.concat(results[i]);
+  let lastId = req.query.lastId;
+  let pageSize = parseInt(req.query.pageSize);
+  if (lastId == null || lastId === '') {  // 第一页
+    var findInTitle = Api.find({ title: query }).limit(pageSize).sort({_id: -1}).exec();  // 在标题中寻找关键字
+    var findInUrl = Api.find({ url: query }).limit(pageSize).sort({_id: -1}).exec();  // 在url中寻找关键字
+    Promise.all([findInTitle, findInUrl]).then(function(results) {
+      // console.log('查询结果：', results);
+      // 把结果合成一个数组方便返回
+      var resArray = [];
+      for (var i=0,len=results.length;i<len;i++) {
+        var strArr = JSON.stringify(resArray);
+        if (results[i] !== [] && strArr.indexOf(JSON.stringify(results[i][0])) == -1 ) {
+          resArray = resArray.concat(results[i]);
+        }
       }
-    }
-    // console.log('合并后的结果:', resArray);
-    // done();
-    res.json({ success: true, message: '服务器已经收到了关键字', data: resArray });
-  });
+      // console.log('合并后的结果:', resArray);
+      // done();
+      let lastId_temp = '';
+      if (resArray.length === 0) {
+        lastId_temp = ''
+      } else {
+        lastId_temp = resArray[resArray.length-1]._id;
+      }
+      res.json({ success: true, message: '服务器已经收到了关键字', data: resArray, lastId: lastId_temp });
+    });
+  } else {  // 第1+n页
+    var findInTitle = Api.find({ title: query, _id: {$lt: lastId} }).limit(pageSize).sort({_id: -1}).exec();  // 在标题中寻找关键字
+    var findInUrl = Api.find({ url: query, _id: {$lt: lastId} }).limit(pageSize).sort({_id: -1}).exec();  // 在url中寻找关键字
+    Promise.all([findInTitle, findInUrl]).then(function(results) {
+      // console.log('查询结果：', results);
+      // 把结果合成一个数组方便返回
+      var resArray = [];
+      for (var i=0,len=results.length;i<len;i++) {
+        var strArr = JSON.stringify(resArray);
+        if (results[i] !== [] && strArr.indexOf(JSON.stringify(results[i][0])) == -1 ) {
+          resArray = resArray.concat(results[i]);
+        }
+      }
+      // console.log('合并后的结果:', resArray);
+      // done();
+      let lastId_temp = lastId;
+      if (resArray.length === 0) {
+        lastId_temp = lastId;
+      } else {
+        lastId_temp = resArray[resArray.length-1]._id;
+      }
+      res.json({ success: true, message: '服务器已经收到了关键字', data: resArray, lastId: lastId_temp });
+    });
+  }
 });
 
 // 响应/search的预检响应

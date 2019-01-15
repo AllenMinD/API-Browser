@@ -54,6 +54,10 @@ Page({
       },
       success(res) {
         console.log('调用/getMyApi接口返回的结果：', res);
+
+        // 判断当401的情况下（因多端登录导致token被刷新而失效），需要用户重新登录
+        app.handleUnauthorized(res.statusCode);
+
         if (res.data.success) {
           that.setData({
             apiCount: res.data.data.length
@@ -70,6 +74,10 @@ Page({
       },
       success(res) {
         console.log('调用/getMyStars接口返回的结果：', res);
+
+        // 判断当401的情况下（因多端登录导致token被刷新而失效），需要用户重新登录
+        app.handleUnauthorized(res.statusCode);
+
         if (res.data.success) {
           that.setData({
             starCount: res.data.data.length

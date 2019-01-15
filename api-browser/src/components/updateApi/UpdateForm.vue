@@ -302,11 +302,6 @@ export default {
       var that = this;
       this.formData.showProperties = this.$store.getters.getShowProperties;
       this.$store.dispatch("updateApi", this.submitFormData);
-      this.$message({
-        message: "更新api成功",
-        type: "success"
-      });
-      router.replace("/useapi/" + that.passApi._id);
     },
     deleteApi: function() {
       var that = this;
@@ -317,11 +312,6 @@ export default {
       })
         .then(() => {
           this.$store.dispatch("deleteApi", { apiId: this.passApi._id });
-          this.$message({
-            type: "success",
-            message: "删除成功!"
-          });
-          router.replace("/user/" + that.passApi.author);
         })
         .catch(() => {
           this.$message({

@@ -39,7 +39,7 @@
         <wux-cell-group title="设置请求参数">
           <view class="param-item" wx:for="{{api.params}}" wx:key="{{index}}">
             <wux-cell title="" hover-class="none">
-              <wux-input value="{{item.value ? item.value : item.default}}" controlled label="{{item.key + '(' + item.necessary + ')'}}" bind:change="changeParams" data-itemindex="{{index}}" />
+              <wux-input value="{{item.value ? item.value : item.default}}" controlled label="{{item.key + '(' + item.necessary + ')'}}" bind:blur="changeParams" data-itemindex="{{index}}" />
             </wux-cell>
           </view>
         </wux-cell-group>
@@ -80,7 +80,7 @@
             <!-- 如果检测到配置对象中（viewOptions）对应的有设置键的中文名的时候，就用中文名来显示 -->
             {{ viewOptions[currentNodeKey] != null && viewOptions[currentNodeKey].cnName ? viewOptions[currentNodeKey].cnName : currentNodeKey }}
           </view>
-          <scroll-view scroll-x scroll-y style="width: 100%">
+          <scroll-view scroll-x style="width: 100%; height: 100%">
 
             <view class="table">
               <view class="tr">
