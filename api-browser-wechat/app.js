@@ -3,8 +3,8 @@ App({
   onLaunch: function () {
     const that = this;
     
-    // 进入小程序的时候，尝试自动登录
-    that.tryAutoLogin();
+    // // 进入小程序的时候，尝试自动登录
+    // that.tryAutoLogin();
 
     // // 展示本地存储能力
     // var logs = wx.getStorageSync('logs') || []
@@ -88,35 +88,35 @@ App({
   },
 
   // 自动登录
-  tryAutoLogin() {
-    const that = this;
-    let token = wx.getStorageSync('token');
-    if (!token) {  // 没有token，自动登录失败，退回登录页
-      // 跳回登录页面
-      wx.reLaunch({
-        url: '/pages/login/login',
-      });
-      return;
-    }
+  // tryAutoLogin() {
+  //   const that = this;
+  //   let token = wx.getStorageSync('token');
+  //   if (!token) {  // 没有token，自动登录失败，退回登录页
+  //     // 跳回登录页面
+  //     wx.reLaunch({
+  //       url: '/pages/login/login',
+  //     });
+  //     return;
+  //   }
 
-    let expirationDate = wx.getStorageSync('expirationDate');
-    let now = new Date();
-    if (now.toString() >= expirationDate) {  // token已经过期，自动登录失败，返回登录页
-      // 跳回登录页面
-      wx.reLaunch({
-        url: '/pages/login/login',
-      });
-      return;
-    }
+  //   let expirationDate = wx.getStorageSync('expirationDate');
+  //   let now = new Date();
+  //   if (now.toString() >= expirationDate) {  // token已经过期，自动登录失败，返回登录页
+  //     // 跳回登录页面
+  //     wx.reLaunch({
+  //       url: '/pages/login/login',
+  //     });
+  //     return;
+  //   }
 
-    let expiresIn = new Date(new Date(expirationDate).getTime() - now.getTime());
-    // 自动登录成功，并开始对token有效期进行倒数计时
-    that.expiresTimeout(expiresIn);  // token计时
-    // 跳转到探索页面
-    wx.switchTab({
-      url: '/pages/explore/explore',
-    });
-  },
+  //   let expiresIn = new Date(new Date(expirationDate).getTime() - now.getTime());
+  //   // 自动登录成功，并开始对token有效期进行倒数计时
+  //   that.expiresTimeout(expiresIn);  // token计时
+  //   // 跳转到探索页面
+  //   wx.switchTab({
+  //     url: '/pages/explore/explore',
+  //   });
+  // },
 
   // token有效期倒数计时
   expiresTimeout(expiresIn) {
@@ -172,7 +172,7 @@ App({
       console.log('调用接口失败，原因是token失效了');
       wx.showModal({
         title: '请重新登录',
-        content: 'token发生了变化，请重新登录',
+        content: '缺少token或token已失效，请重新登录',
         confirmColor: '#409eff',
         showCancel: false,
         success(res) {
