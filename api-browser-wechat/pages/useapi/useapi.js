@@ -14,6 +14,7 @@ Page({
     isCollected: false,  // 是否收藏了这个api
     viewOptions: null, // 视图配置对象
     loading: false,  // 加载动画
+    typeofCurrentNodeItem: 'object',  // currentNode数组中的元素的类型
     currentNode: null, // 当前键值对的值
     currentNodeKey: "Root", // 当前键值对的键
     columns: null,
@@ -162,7 +163,8 @@ Page({
     }
 
     that.setData({
-      currentNode: newArray
+      currentNode: newArray,
+      typeofCurrentNodeItem: typeof newArray[0] == 'number' || typeof newArray[0] == 'string' ? 'notObject' : 'object'
     });
 
     that.getTableHead();  // 每当currentNode发生变化时，都要重新获取表头，即更新columns数组
@@ -177,9 +179,14 @@ Page({
         i,
         len = currentNode.length;
     for (i = 0; i < len; i++) {
-      for (key in currentNode[i]) {
-        if (columns_temp.indexOf(key) === -1) {
-          columns_temp.push(key);
+      // 如果currentNode数组中的元素是普通值（数字或字符串）
+      if (typeof currentNode[i] == 'number' || typeof currentNode[i] == 'string') {
+        columns_temp.push(i);
+      } else {  // 如果currentNode中的元素是对象
+        for (key in currentNode[i]) {
+          if (columns_temp.indexOf(key) === -1) {
+            columns_temp.push(key);
+          }
         }
       }
     }
@@ -251,7 +258,8 @@ Page({
       nameStack,
       currentNode,
       currentNodeKey,
-      nameStackForBread
+      nameStackForBread,
+      typeofCurrentNodeItem: typeof currentNode[0] == 'number' || typeof currentNode[0] == 'string' ? 'notObject' : 'object'
     });
 
     that.getTableHead();  // 每当currentNode发生变化时，都要重新获取表头，即更新columns数组
@@ -275,7 +283,8 @@ Page({
       nameStack,
       currentNode,
       currentNodeKey,
-      nameStackForBread
+      nameStackForBread,
+      typeofCurrentNodeItem: typeof currentNode[0] == 'number' || typeof currentNode[0] == 'string' ? 'notObject' : 'object'
     });
 
     that.getTableHead();  // 每当currentNode发生变化时，都要重新获取表头，即更新columns数组

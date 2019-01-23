@@ -7,7 +7,7 @@
     </div>
     <div class="all-properties">
       <el-form :model="viewOptions" label-position="left">
-        <el-form-item :label="item" label-width="20%" v-for="(value, item, index) in viewOptions" :key="index">
+        <el-form-item :label="item" label-width="20%" v-for="(value, item, index) in viewOptions" :key="index" v-if="isNaN(item)">
           <el-input
             style="width: 50%; margin-right: 10%"
             :placeholder="'键名的中文注释（选填，默认为：' + item + '）'"

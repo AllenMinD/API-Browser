@@ -12,7 +12,7 @@
             <!-- <p v-if="isAuth">当前登录用户：{{ username }}</p> -->
             <!-- <app-api-list :apis="apiList"></app-api-list> -->
             <!-- 热门Api列表 -->
-            <div class="white-box-full top-api">
+            <div class="white-box-full top-api" v-if="!isSearching">
               <div class="list-title">热门API</div>
 
               <div class="top-api-list">

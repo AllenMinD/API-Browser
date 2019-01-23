@@ -111,7 +111,7 @@
     </div>
 
     <!-- 视图设置 -->
-    <el-form-item :label="item" label-width="20%" v-for="(value, item, index) in formData.viewOptions" :key="item + index">
+    <el-form-item :label="item" label-width="20%" v-for="(value, item, index) in formData.viewOptions" :key="item + index" v-if="isNaN(item)">
       <el-input
         style="width: 50%; margin-right: 10%"
         :placeholder="'键名的中文注释（选填，默认为：' + item + '）'"

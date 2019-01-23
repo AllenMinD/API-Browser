@@ -41,7 +41,7 @@
     <br>
 
     <!-- 表格 -->
-    <div id="table-part" v-if="currentNode && currentNode.length !== 1">
+    <div id="table-part" v-if="currentNode && (currentNode.length !== 1 || typeof currentNode[0] != 'object')">
       <table>
         <thead>
           <tr>
@@ -60,24 +60,36 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(row, index) in currentNode" :key="index">
-            <!-- <td>
-              <el-button type="danger" plain size="small" @click="deleteRow(row)">删除</el-button>
-            </td>-->
-            <td
-              v-for="(column, index2) in columns"
-              :key="index2"
-              v-if="viewOptions[column] == null || viewOptions[column].isShow != 'false'"
-            >
-              <!-- 用row[column]来获取单元格内容 -->
-              <div
-                v-if="typeof row[column] == 'object' && row[column] != null || Array.isArray(row[column])"
+          <!-- 如果currentNode数组中的元素是普通值（数字或字符串） -->
+          <template v-if="currentNode && typeof currentNode[0] == 'number' || typeof currentNode[0] == 'string'">
+            <tr>
+              <td v-for="(item, index) in currentNode" :key="index">
+                {{ item }}
+              </td>
+            </tr>
+          </template>
+
+          <!-- 如果currentNode数组中的元素是对象 -->
+          <template v-else>
+            <tr v-for="(row, index) in currentNode" :key="index">
+              <!-- <td>
+                <el-button type="danger" plain size="small" @click="deleteRow(row)">删除</el-button>
+              </td>-->
+              <td
+                v-for="(column, index2) in columns"
+                :key="index2"
+                v-if="viewOptions[column] == null || viewOptions[column].isShow != 'false'"
               >
-                <el-button type="primary" plain size="small" @click="expand(row[column], column)">展开</el-button>
-              </div>
-              <div v-else>{{ row[column]?row[column]:'null' }}</div>
-            </td>
-          </tr>
+                <!-- 用row[column]来获取单元格内容 -->
+                <div
+                  v-if="typeof row[column] == 'object' && row[column] != null || Array.isArray(row[column])"
+                >
+                  <el-button type="primary" plain size="small" @click="expand(row[column], column)">展开</el-button>
+                </div>
+                <div v-else>{{ row[column]?row[column]:'null' }}</div>
+              </td>
+            </tr>
+          </template>
         </tbody>
 
         <tfoot></tfoot>
@@ -85,7 +97,7 @@
     </div>
 
     <!-- 当表格只有一行时（currentNode.length ===1）用卡片列表的形式显示 -->
-    <el-card class="box-card" v-if="currentNode && currentNode.length === 1">
+    <el-card class="box-card" v-if="currentNode && currentNode.length === 1 && typeof currentNode[0] == 'object'">
       <div slot="header" class="clearfix">
         <!-- 如果检测到配置对象中（viewOptions）对应的有设置键的中文名的时候，就用中文名来显示 -->
         <span>{{ viewOptions[currentNodeKey] != null && viewOptions[currentNodeKey].cnName ? viewOptions[currentNodeKey].cnName : currentNodeKey }}</span>
@@ -112,10 +124,7 @@
             @click="expand(currentNode[0][column], column)"
           >展开</el-button>
         </span>
-        <span
-          class="card-value"
-          v-else
-        >{{ currentNode[0][column]?currentNode[0][column]:'null' }}</span>
+        <span class="card-value" v-else>{{ currentNode[0][column]?currentNode[0][column]:'null' }}</span>
       </div>
     </el-card>
 
@@ -161,8 +170,8 @@
 export default {
   props: ["jsonData", "callType", "viewOptions"],
   // viewOptions: {
-    // json数据的设置对象，用来设置json数据的键名的中文名和是否显示该键值对
-    /*
+  // json数据的设置对象，用来设置json数据的键名的中文名和是否显示该键值对
+  /*
       格式：
       keyName: {
         originKey: '原来键名'
@@ -172,14 +181,14 @@ export default {
     */
   //},
   data: function() {
-    console.log('传过来的viewOptions', this.viewOptions);
+    console.log("传过来的viewOptions", this.viewOptions);
     return {
       currentNode: null, // 当前键值对的值
       currentNodeKey: "Root", // 当前键值对的键
       columns: null,
       stack: [], // 节点内容栈
       nameStack: [], // 节点键名栈（作为卡片的头部）
-      nameStackForBread: ["Root"], // 节点键名栈 （作为面包屑）
+      nameStackForBread: ["Root"] // 节点键名栈 （作为面包屑）
       // dialogFormVisible: false,
       // dialogFormVisible2: false,
       // form: {
@@ -234,9 +243,15 @@ export default {
         i,
         len = val.length;
       for (i = 0; i < len; i++) {
-        for (key in val[i]) {
-          if (keys.indexOf(key) === -1) {
-            keys.push(key);
+        if (typeof val[i] == "string" || typeof val[i] == "number") {
+          // 如果数组中的元素是对象
+          keys.push(i);
+        } else {
+          // 如果数组中的元素是普通值（数字或字符串）
+          for (key in val[i]) {
+            if (keys.indexOf(key) === -1) {
+              keys.push(key);
+            }
           }
         }
       }

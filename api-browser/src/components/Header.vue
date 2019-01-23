@@ -1,7 +1,10 @@
 <template>
   <div>
     <ul class="my-menu">
-      <router-link tag="li" :to="{ name: 'Home' }" class="my-menu-logo" exact>API Browser</router-link>
+      <router-link tag="li" :to="{ name: 'Home' }" class="my-menu-logo" exact>
+        <img src="../assets/logo2.png" class="logo-img" alt="logo">
+        API Browser
+      </router-link>
       <!-- <router-link tag="li" to="/" class="my-menu-item" active-class="active" exact>主页</router-link> -->
       <router-link v-if="!isAuth" tag="li" to="/signup" class="my-menu-item menu-right" active-class="active">注册</router-link>
       <router-link v-if="!isAuth" tag="li" to="/signin" class="my-menu-item menu-right" active-class="active">登录</router-link>
@@ -82,6 +85,8 @@
   }
 
   .my-menu-logo {
+    display: inline-flex;
+    align-items: center;
     color: #409eff;
     font-size: 1.6em;
     font-family: 'Lato';
@@ -90,6 +95,12 @@
   .my-menu-logo:hover {
     cursor: pointer;
     color: #8dc5ff;
+  }
+
+  .my-menu-logo .logo-img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
   }
 
   .my-menu-item {

@@ -75,7 +75,7 @@
         </view>
 
         <!-- 表格控件 -->
-        <view class="table-view" wx:if="{{currentNode && currentNode.length !== 1}}">
+        <view class="table-view" wx:if="{{currentNode && (currentNode.length !== 1 || typeofCurrentNodeItem == 'notObject')}}">
           <view class="table-header">
             <!-- 如果检测到配置对象中（viewOptions）对应的有设置键的中文名的时候，就用中文名来显示 -->
             {{ viewOptions[currentNodeKey] != null && viewOptions[currentNodeKey].cnName ? viewOptions[currentNodeKey].cnName : currentNodeKey }}
@@ -87,24 +87,35 @@
                 <view class="th" wx:for="{{columns}}" wx:for-item="column" wx:for-index="index1" wx:key="{{index1}}" wx:if="{{viewOptions[column] == null || viewOptions[column].isShow != 'false'}}">{{ viewOptions[column] != null && viewOptions[column].cnName != undefined ? viewOptions[column].cnName : column }}</view>
               </view>
 
-
-              <view class="tr" wx:for="{{currentNode}}" wx:for-item="row" wx:for-index="index2" wx:key="{{index2}}">
-                <view class="td" wx:for="{{columns}}" wx:for-item="column" wx:for-index="index3" wx:key="{{index3}}" wx:if="{{viewOptions[column] == null || viewOptions[column].isShow != 'false'}}">
-                  <!-- 用row[column]来获取单元格内容 -->
-                  <view wx:if="{{canExpand[index2 + column]}}">
-                    <button class="expand-btn" bindtap="expand" data-expanddata="{{row[column]}}" data-keyname="{{column}}">展开</button>
-                  </view>
-                  <view wx:else>
-                    {{ row[column]?row[column]:'null' }}
+              <!-- 如果currentNode的元素是普通值 -->
+              <block wx:if="{{typeofCurrentNodeItem == 'notObject'}}">
+                <view class="tr">
+                  <view class="td" wx:for="{{currentNode}}" wx:for-item="item" wx:for-index="index2" wx:key="{{index2}}">
+                    {{item}}
                   </view>
                 </view>
-              </view>
+              </block>
+
+              <!-- 如果currentNode的元素是对象 -->
+              <block wx:else>
+                <view class="tr" wx:for="{{currentNode}}" wx:for-item="row" wx:for-index="index2" wx:key="{{index2}}">
+                  <view class="td" wx:for="{{columns}}" wx:for-item="column" wx:for-index="index3" wx:key="{{index3}}" wx:if="{{viewOptions[column] == null || viewOptions[column].isShow != 'false'}}">
+                    <!-- 用row[column]来获取单元格内容 -->
+                    <view wx:if="{{canExpand[index2 + column]}}">
+                      <button class="expand-btn" bindtap="expand" data-expanddata="{{row[column]}}" data-keyname="{{column}}">展开</button>
+                    </view>
+                    <view wx:else>
+                      {{ row[column]?row[column]:'null' }}
+                    </view>
+                  </view>
+                </view>
+              </block>
             </view>
           </scroll-view>
         </view>
 
         <!-- 卡片控件 -->
-        <view class="card-view" wx:if="{{currentNode && currentNode.length === 1}}">
+        <view class="card-view" wx:if="{{currentNode && currentNode.length === 1 && typeofCurrentNodeItem == 'object'}}">
           <!-- 卡片头部 -->
           <view class="card-header">
             <!-- 如果检测到配置对象中（viewOptions）对应的有设置键的中文名的时候，就用中文名来显示 -->

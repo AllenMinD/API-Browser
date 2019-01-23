@@ -188,7 +188,8 @@ App({
   globalData: {
     userInfo: null,
     // domain: "http://localhost:3000",
-    domain: "http://120.79.220.199:3000",
+    // domain: "http://120.79.220.199:3000",
+    domain: "https://allenxlab.cn:3000",
     minePageStatus: 0,  // “我的（mine）”页面的状态，0表示显示“我的star”，1表示显示“我的api”
   }
 })
