@@ -272,8 +272,8 @@ scroll-view {
   height: 100rpx;
   border: 2rpx solid #dcdfe6;
   border-bottom: none;
-  font-size: 32rpx;
-  font-weight: 600;
+  font-size: 34rpx;
+  font-weight: 800;
   color: #909399;
   overflow-x: hidden;
 }
@@ -292,6 +292,10 @@ scroll-view {
   display: table-row;
   width: 100%;
   height: 100rpx;
+}
+
+.tr:nth-child(even) {
+  background-color: #f5f7fa;
 }
 
 .th, .td {
@@ -317,6 +321,8 @@ scroll-view {
   font-size: 32rpx;
   color: #606266;
   font-weight: 600;
+  min-width: 150rpx;
+  text-align: center;
 }
 
 /* 卡片控件 */

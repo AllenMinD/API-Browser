@@ -2,9 +2,9 @@ import axios from 'axios';
 import router from '../../router';
 var qs = require('qs');
 
-// axios.defaults.baseURL = 'http://localhost:3000';
-// axios.defaults.baseURL = 'http://120.79.220.199:3000';
-axios.defaults.baseURL = 'https://allenxlab.cn:3000'
+axios.defaults.baseURL = 'https://localhost:3000';
+// axios.defaults.baseURL = 'https://120.79.220.199:3000';
+// axios.defaults.baseURL = 'https://allenxlab.cn:3000'
 
 var state = {
   isTesting: false,
@@ -24,9 +24,9 @@ var state = {
   allApisList: [],
   searchApisList: [],
   tagApisList: [],
-  // reqUrl: 'http://localhost:3000',
-  // reqUrl: 'http://120.79.220.199:3000',
-  reqUrl: 'https://allenxlab.cn:3000'
+  reqUrl: 'https://localhost:3000',
+  // reqUrl: 'https://120.79.220.199:3000',
+  // reqUrl: 'https://allenxlab.cn:3000'
 };
 
 var getters = {

@@ -11,6 +11,14 @@ page {
   padding: 20rpx 10%;
 }
 
+/* 返回按钮 */
+.backTo {
+  position: fixed;
+  top: 10rpx;
+  left: 60rpx;
+  width: 40rpx;
+}
+
 .header {
   margin-bottom: 100rpx;
 }

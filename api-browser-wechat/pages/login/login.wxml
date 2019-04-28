@@ -1,5 +1,11 @@
 <!--pages/login/login.wxml-->
 <view class="container">
+  <!-- 返回按钮 -->
+  <view class="wrap" bindtap='backTo'>
+    <image class="backTo" src="../../images/back.png" mode="widthFix"></image>
+  </view>
+
+
   <!-- 头部 -->
   <view class="header">
     <view class="main-title">API Browser</view>
@@ -23,5 +29,5 @@
   <button class="submit-btn" bindtap="login">登录</button>
 
   <!-- 提示 -->
-  <view class="tips">*注册请前往Web端。</view>
+  <view class="tips">*注册请前往Web端(https://allenxlab.cn)。</view>
 </view>

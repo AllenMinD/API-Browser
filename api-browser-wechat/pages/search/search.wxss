@@ -25,6 +25,7 @@ page {
 
 .search-form {
   width: 90%;
+  height: 60rpx;
   border-radius: 100rpx;
   display: flex;
   align-items: center;
@@ -33,7 +34,7 @@ page {
 
 .search-form .fa {
   color: #e4e7ed;
-  margin: 0 20rpx 0 40rpx;
+  margin: 0 20rpx 0 30rpx;
 }
 
 .search-form input {

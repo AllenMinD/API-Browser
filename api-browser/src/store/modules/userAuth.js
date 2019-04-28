@@ -2,9 +2,9 @@ import axios from 'axios';
 import router from '../../router';
 var qs = require('qs');
 
-// var reqUrl = 'http://localhost:3000';
-// var reqUrl = 'http://120.79.220.199:3000';
-var reqUrl = 'https://allenxlab.cn:3000';
+var reqUrl = 'https://localhost:3000';
+// var reqUrl = 'https://120.79.220.199:3000';
+// var reqUrl = 'https://allenxlab.cn:3000';
 
 var that = this;
 

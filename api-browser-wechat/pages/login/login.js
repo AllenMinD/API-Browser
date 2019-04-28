@@ -68,5 +68,12 @@ Page({
     let username = that.data.username;
     let password = that.data.password;
     app.login(username, password);
+  },
+
+  // 返回探索页面
+  backTo() {
+    wx.switchTab({
+      url: '../explore/explore',
+    })
   }
 })
